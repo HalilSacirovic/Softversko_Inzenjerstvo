@@ -18,6 +18,7 @@ const AddUser = () => {
       lastName,
       yearBirth,
     };
+    console.log("Poslat objekat:", newUser);
 
     try {
       const response = await fetch("http://localhost:5000/user2", {
