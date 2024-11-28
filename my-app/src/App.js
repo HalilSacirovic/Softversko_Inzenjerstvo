@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import AddProduct from "./pages/AddProduct";
-import AddUser from "./pages/AddUser";
+import AddProduct from "./pages/AddProduct/AddProduct";
+import AddUser from "./pages/ForTesting";
 import UserList from "./pages/ListUser";
+import SignUp from "./pages/SignUp/SignUp";
 
 const ItemsList = () => {
   const [items, setItems] = useState([]);
@@ -35,6 +36,7 @@ const ItemsList = () => {
       <AddProduct />
       <AddUser />
       <UserList />
+      <SignUp />
     </div>
   );
 };

@@ -28,15 +28,7 @@ db.connect((err) => {
   }
 });
 
-app.get("/items", (req, res) => {
-  db.query("SELECT * FROM items", (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(results);
-  });
-});
-
+/// USERS /////////////////////
 app.get("/user2", (req, res) => {
   db.query("SELECT * FROM user2", (err, results) => {
     if (err) {
@@ -63,6 +55,51 @@ app.post("/user2", (req, res) => {
   db.query(
     query,
     [username, password, name, lastName, yearBirth],
+    (err, result) => {
+      if (err) {
+        console.error("SQL greška:", err.sqlMessage);
+        res
+          .status(500)
+          .json({ message: "Greška pri unosu korisnika", error: err });
+      } else {
+        res.status(201).json({
+          message: "Korisnik uspešno dodat",
+          userId: result.insertId,
+        });
+      }
+    }
+  );
+});
+
+////////////////////////////////////////////////////////////////////////
+
+app.get("/items", (req, res) => {
+  db.query("SELECT * FROM items", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+app.post("/items", (req, res) => {
+  const { name, category, price, description, brand, model } = req.body;
+
+  console.log("Podaci za unos:", {
+    name,
+    category,
+    price,
+    description,
+    brand,
+    model,
+  });
+
+  const query =
+    "INSERT INTO items (name, category, price, description,brand,model) VALUES (?, ?, ?, ?, ?, ?)";
+
+  db.query(
+    query,
+    [name, category, price, description, brand, model],
     (err, result) => {
       if (err) {
         console.error("SQL greška:", err.sqlMessage);
@@ -109,4 +146,70 @@ app.patch("/items/:id", (req, res) => {
     }
     res.json({ message: "Proizvod je uspešno ažuriran" });
   });
+});
+
+app.post("/users2", (req, res) => {
+  const {
+    username,
+    firstName,
+    lastName,
+    email,
+    password,
+    phoneNum,
+    street,
+    city,
+    postalCode,
+    country,
+    dateOfBirth,
+    profilePicture,
+  } = req.body;
+
+  console.log("Podaci za unos:", {
+    username,
+    firstName,
+    lastName,
+    email,
+    password,
+    phoneNum,
+    street,
+    city,
+    postalCode,
+    country,
+    dateOfBirth,
+    profilePicture,
+  });
+
+  const query =
+    "INSERT INTO users2 (username, firstName, lastName,email,password,phoneNum,street,city,postalCode,country,dateOfBirth,profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  db.query(
+    query,
+    [
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      phoneNum,
+      street,
+      city,
+      postalCode,
+      country,
+      dateOfBirth,
+      profilePicture,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("SQL greška:", err.sqlMessage);
+        res
+          .status(500)
+          .json({ message: "Greška pri unosu korisnika", error: err });
+      } else {
+        res.status(201).json({
+          message: "Korisnik uspešno dodat",
+          userId: result.insertId,
+        });
+      }
+    }
+  );
 });

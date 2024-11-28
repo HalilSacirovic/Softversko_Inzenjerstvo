@@ -4,8 +4,7 @@ const AddProduct = () => {
   // State za formu
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [condition, setCondition] = useState("Novo");
+  const [price, setPrice] = useState();
   const [description, setDescription] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
@@ -18,7 +17,6 @@ const AddProduct = () => {
       name,
       category,
       price,
-      condition,
       description,
       brand,
       model,
@@ -79,17 +77,7 @@ const AddProduct = () => {
           />
         </label>
         <br />
-        <label>
-          Stanje:
-          <select
-            value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-            required
-          >
-            <option value="Novo">Novo</option>
-            <option value="Polovno">Polovno</option>
-          </select>
-        </label>
+
         <br />
         <label>
           Opis:
