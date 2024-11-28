@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddProduct from "./pages/AddProduct";
 import AddUser from "./pages/AddUser";
+import UserList from "./pages/ListUser";
 
 const ItemsList = () => {
   const [items, setItems] = useState([]);
@@ -33,6 +34,7 @@ const ItemsList = () => {
       </ul>
       <AddProduct />
       <AddUser />
+      <UserList />
     </div>
   );
 };

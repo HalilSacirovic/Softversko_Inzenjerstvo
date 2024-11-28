@@ -37,6 +37,15 @@ app.get("/items", (req, res) => {
   });
 });
 
+app.get("/user2", (req, res) => {
+  db.query("SELECT * FROM user2", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
 app.post("/user2", (req, res) => {
   const { username, password, name, lastName, yearBirth } = req.body;
 
