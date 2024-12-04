@@ -4,7 +4,7 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/user2")
+    fetch("http://localhost:5000/users2")
       .then((response) => response.json())
       .then((data) => {
         console.log("Dohvaćeni useri:", data);

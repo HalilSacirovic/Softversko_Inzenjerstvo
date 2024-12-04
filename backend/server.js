@@ -213,3 +213,43 @@ app.post("/users2", (req, res) => {
     }
   );
 });
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Nedostaju korisničko ime ili lozinka",
+    });
+  }
+
+  console.log("Pokušaj prijave za korisnika:", email);
+
+  const query = "SELECT * FROM users2 WHERE email = ? AND password = ?";
+  db.query(query, [email, password], (err, results) => {
+    if (err) {
+      console.error("SQL greška:", err.sqlMessage);
+      return res
+        .status(500)
+        .json({ message: "Greška pri proveri korisnika", error: err });
+    }
+
+    if (results.length > 0) {
+      const user = results[0];
+      console.log("Korisnik pronađen:", user);
+
+      const token = "your-generated-token"; // JWT OVDE TREBA
+
+      return res.status(200).json({
+        message: "Prijava uspešna",
+        token: token,
+        userId: user.id,
+      });
+    } else {
+      console.log("Neuspešna prijava: Pogrešno korisničko ime ili lozinka");
+      return res.status(401).json({
+        message: "Pogrešno korisničko ime ili lozinka",
+      });
+    }
+  });
+});

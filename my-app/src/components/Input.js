@@ -8,9 +8,12 @@ const Input = (props) => {
       <label>{props.name}</label>
       <input
         type={props.type}
+        name={props.name}
+        onChange={props.handleChange}
+        onBlur={props.handleBlur}
+        value={props.values.email}
         // value=""
         // onChange={(e) => setUsername(e.target.value)}
-        required
       />
     </div>
   );

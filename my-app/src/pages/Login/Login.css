@@ -78,3 +78,19 @@
     transform: translateY(0px);
     
 }
+
+.login_inputs{
+  
+
+        border: none;
+       border-bottom: 2px solid rgb(190, 190, 190);
+       border-radius: 2px;
+       padding-top: 5px;
+       padding-bottom: 5px;
+       outline: none;
+       width: 90%;
+       /* margin-top: 10px; */
+       /* margin-left: 20px; */
+       font-family: cursive;
+    
+}
