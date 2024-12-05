@@ -1,0 +1,59 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgb(84, 164, 229);
+}
+
+
+.search_bar input{
+    width: 700px;
+    border-radius: 7px;
+    outline: none !important;
+    line-height: 40px;
+    border: none;
+}
+.search_bar input::placeholder{
+    padding-left: 10px;
+}
+
+.icons ul{
+    display: flex
+}
+
+
+.icons ul li{
+    padding-left: 15px;
+}
+
+.main-section{
+
+    display: block;
+}
+
+.products{
+    display: flex;
+}
+
+
+.product_box{
+    border: 1px solid black;
+    /* height: 400px; */
+    
+}
+.products .filters {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+}
+
+.products .listed_products{
+    display: flex;
+}
