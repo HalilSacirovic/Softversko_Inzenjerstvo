@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import "./SignUp.css";
+import { useLocation, useParams } from "react-router-dom";
 
 const SignUp = () => {
+  const location = useLocation();
+
+  const params = useParams();
+
+  console.log("params ", params);
+
+  console.log(location);
   return (
     <div className="div">
       <div className="box">

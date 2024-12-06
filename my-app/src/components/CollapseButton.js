@@ -13,7 +13,8 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorder from "@mui/icons-material/StarBorder";
 
 export default function NestedList(props) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [border, setBorder] = React.useState(true);
 
   const handleClick = () => {
     setOpen(!open);
@@ -21,18 +22,26 @@ export default function NestedList(props) {
 
   return (
     <List
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+      sx={{ width: "100%", maxWidth: 360 }}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      <ListItemButton onClick={handleClick}>
+      <ListItemButton
+        onClick={handleClick}
+        sx={{ borderBottom: open ? "none" : "1px solid grey" }}
+      >
         {/* <ListItemIcon>
           <InboxIcon />
         </ListItemIcon> */}
         <ListItemText primary={props.name} />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse
+        in={open}
+        timeout="auto"
+        unmountOnExit
+        sx={{ borderBottom: "1px solid grey" }}
+      >
         <List component="div" disablePadding>
           <ListItemButton sx={{ pl: 4 }}>
             {/* <ListItemIcon>

@@ -5,9 +5,7 @@
 }
 
 .navbar{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+   
     background-color: rgb(84, 164, 229);
 }
 
@@ -35,6 +33,7 @@
 .main-section{
 
     display: block;
+    background-color: #f2f2f2;
 }
 
 .products{
@@ -48,12 +47,21 @@
     
 }
 .products .filters {
-    width: 30%;
+    width: 600px;
     display: flex;
     flex-direction: column;
-    padding-right: 20px;
+    /* padding-right: 20px; */
 }
 
 .products .listed_products{
     display: flex;
+}
+.all-div{
+background-color: #f2f2f2;
+}
+
+.nav_container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
