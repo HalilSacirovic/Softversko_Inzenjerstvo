@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import "./SignUp.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const SignUp = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const params = useParams();
 
@@ -259,7 +260,13 @@ const SignUp = () => {
                 {/* Submit Button */}
 
                 <div className="btn">
-                  <button type="submit" disabled={isSubmitting}>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
                     Log In
                   </button>
                 </div>

@@ -5,15 +5,16 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import laptop from "../assets/laptop.png";
 
 export default function ProductCard() {
   return (
-    <Card sx={{ maxWidth: 345, marginLeft: 5, marginTop: 2 }}>
+    <Card sx={{ maxWidth: 255, marginLeft: 5, marginTop: 2 }}>
       <CardMedia
         component="img"
         alt="green iguana"
-        height="140"
-        image="/static/images/cards/contemplative-reptile.jpg"
+        height="170"
+        image={laptop}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">

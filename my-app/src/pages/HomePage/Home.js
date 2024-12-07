@@ -1,11 +1,15 @@
 import "./Home.css";
 import * as React from "react";
-
 import ProductCard from "../../components/ProductCard";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
 import NestedList from "../../components/CollapseButton";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ToggleButton, Typography } from "@mui/material";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import NavBar from "../../components/NavBar";
+import { CategoriesNav } from "../../components/CateregoriesNav";
 
 const HomePage = () => {
   // const location = useLocation();
@@ -21,40 +25,10 @@ const HomePage = () => {
 
   return (
     <div className="all-div">
-      <div className="navbar">
-        <Container>
-          <div className="nav_container">
-            <div className="logo">
-              <h1>E-HUB</h1>
-            </div>
-            <div className="search_bar">
-              <input placeholder="Search for product"></input>
-            </div>
-            <div className="icons">
-              <ul>
-                {/* <Link to={"/signup/" + user.id}>Login</Link */}
-                <Link to={"/signup"}>Login</Link>
-                <li
-                  onClick={() => {
-                    navigate("/signup");
-                  }}
-                >
-                  User
-                </li>
-                <li>Favorite</li>
-                <li>Admin</li>
-                <li>AddProduct</li>
-              </ul>
-            </div>
-          </div>
-        </Container>
-      </div>
+      <NavBar />
       <Container fixed>
         <div className="main-section">
-          <div className="all_product">
-            <button>Products</button>
-            <button>On Sale</button>
-          </div>
+          <CategoriesNav />
 
           <div className="products">
             <div className="filters">

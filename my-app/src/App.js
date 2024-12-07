@@ -5,6 +5,7 @@ import UserList from "./pages/ListUser";
 import SignUp from "./pages/SignUp/SignUp";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage/Home";
+import Product from "./pages/ProductPage/Product";
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         {/* <Route path="/signup/:id" element={<SignUp />} /> ovde sam stavio jer saljem id od usera ali treba za produkt k */}
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/product" element={<Product />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,7 +1,8 @@
 *{
     padding: 0;
     margin: 0;
-    list-style: none;
+    list-style: none; 
+    font-family: cursive !important;
 }
 
 .navbar{
@@ -64,4 +65,9 @@ background-color: #f2f2f2;
     display: flex;
     justify-content: space-around;
     align-items: center;
+}
+
+.all_product{
+    border-bottom: 2px solid grey;
+    padding-bottom: 10px;
 }
