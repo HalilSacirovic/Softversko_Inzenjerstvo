@@ -36,7 +36,7 @@ const HomePage = () => {
               <NestedList name="Name" subname="Lenovo" />
               <NestedList name="Manufacturer" subname="Lenovo" />
               <NestedList name="State" subname="NEW" />
-              <NestedList name="Type" subname="Laptop" />
+              <NestedList name="Type" subname="Laptop" width="350" />
             </div>
 
             <Grid container>

@@ -16,6 +16,8 @@ import Grid from "@mui/material/Grid2";
 import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
 import { purple } from "@mui/material/colors";
+import Specifications from "../../components/Specifications";
+import NestedList from "../../components/CollapseButton";
 
 const Product = () => {
   return (
@@ -81,6 +83,23 @@ const Product = () => {
               <Grid size={6} sx={{ backgroundColor: "#82b1ff" }}>
                 a
               </Grid>
+            </Box>
+            <Box sx={{ marginTop: 5 }}>
+              <NestedList
+                name="Specifications"
+                subname={<Specifications />}
+                width="500"
+              />
+              <NestedList
+                name="Reviews"
+                subname={<Specifications />}
+                width="500"
+              />
+              <NestedList
+                name="Description"
+                subname={<Specifications />}
+                width="500"
+              />
             </Box>
           </Grid>
         </Grid>
