@@ -29,6 +29,7 @@ const App = () => {
         {/* <Route path="/signup/:id" element={<SignUp />} /> ovde sam stavio jer saljem id od usera ali treba za produkt k */}
         <Route path="/signup" element={<SignUp />} />
         <Route path="/product" element={<Product />} />
+        <Route path="/addproduct" element={<AddProduct />} />
       </Routes>
     </BrowserRouter>
   );
