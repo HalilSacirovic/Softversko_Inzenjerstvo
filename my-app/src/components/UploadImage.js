@@ -1,3 +1,4 @@
+import { Button, Box } from "@mui/material";
 import React from "react";
 import ImageUploading from "react-images-uploading";
 
@@ -5,14 +6,119 @@ function UploadImage() {
   const [images, setImages] = React.useState([]);
   const maxNumber = 69;
 
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
+  const onChange = (imageList) => {
     setImages(imageList);
   };
 
+  const updateImage = (index) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const updatedImages = [...images];
+          updatedImages[index] = {
+            ...updatedImages[index],
+            data_url: e.target.result,
+          };
+          setImages(updatedImages);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
+
+  const removeImage = (index) => {
+    const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
+    setImages(updatedImages);
+  };
+
   return (
-    <div className="App">
+    <div className="not_app">
+      <Box
+        sx={{
+          width: "100%",
+          height: "300px",
+          backgroundColor: "lightgray",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          marginBottom: "20px",
+          border: "1px solid black",
+          overflowY: "auto",
+          padding: "10px",
+        }}
+      >
+        {images.length > 0 ? (
+          images.map((image, index) => (
+            <div
+              key={index}
+              style={{
+                width: "200px",
+                height: "200px",
+                position: "relative",
+                margin: "5px",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "white",
+                boxShadow: "0 0 5px rgba(0,0,0,0.5)",
+              }}
+            >
+              <img
+                src={image["data_url"]}
+                alt={`Selected ${index}`}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  top: "5px",
+                  right: "5px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                <Button
+                  size="small"
+                  sx={{
+                    backgroundColor: "orange",
+                    color: "black",
+                  }}
+                  onClick={() => updateImage(index)}
+                >
+                  Update
+                </Button>
+                <Button
+                  size="small"
+                  sx={{
+                    backgroundColor: "red",
+                    color: "white",
+                  }}
+                  onClick={() => removeImage(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>BLANK IMAGE</p>
+        )}
+      </Box>
+
       <ImageUploading
         multiple
         value={images}
@@ -20,35 +126,19 @@ function UploadImage() {
         maxNumber={maxNumber}
         dataURLKey="data_url"
       >
-        {({
-          imageList,
-          onImageUpload,
-          onImageRemoveAll,
-          onImageUpdate,
-          onImageRemove,
-          isDragging,
-          dragProps,
-        }) => (
-          // write your building UI
+        {({ onImageUpload, dragProps }) => (
           <div className="upload__image-wrapper">
-            <button
-              style={isDragging ? { color: "red" } : undefined}
+            <Button
+              sx={{
+                color: "black",
+                backgroundColor: "orange",
+                margin: "5px",
+              }}
               onClick={onImageUpload}
               {...dragProps}
             >
-              {imageList.map((image, index) => (
-                <div key={index} className="image-item">
-                  <img src={image["data_url"]} alt="" width="100" />
-                  <div className="image-item__btn-wrapper">
-                    <button onClick={() => onImageUpdate(index)}>Update</button>
-                    <button onClick={() => onImageRemove(index)}>Remove</button>
-                  </div>
-                </div>
-              ))}
               Click or Drop here
-            </button>
-            &nbsp;
-            <button onClick={onImageRemoveAll}>Remove all images</button>
+            </Button>
           </div>
         )}
       </ImageUploading>
