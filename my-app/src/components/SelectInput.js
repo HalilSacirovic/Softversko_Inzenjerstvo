@@ -4,8 +4,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
-export default function BasicSelect() {
+export default function BasicSelect(props) {
   const [age, setAge] = React.useState("");
 
   const handleChange = (event) => {
@@ -13,9 +14,9 @@ export default function BasicSelect() {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl sx={{ width: 200 }}>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+    <Box sx={{ minWidth: 200, paddingBottom: 2 }}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

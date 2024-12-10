@@ -16,7 +16,7 @@ const NavBar = () => {
           <div className="icons">
             <ul>
               {/* <Link to={"/signup/" + user.id}>Login</Link */}
-              <Link to={"/signup"}>Login</Link>
+              <Link to={"/login"}>Login</Link>
               <li
                 onClick={() => {
                   navigate("/signup");
@@ -26,7 +26,13 @@ const NavBar = () => {
               </li>
               <li>Favorite</li>
               <li>Admin</li>
-              <li>AddProduct</li>
+              <li
+                onClick={() => {
+                  navigate("/addproduct");
+                }}
+              >
+                AddProduct
+              </li>
             </ul>
           </div>
         </div>

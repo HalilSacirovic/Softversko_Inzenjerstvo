@@ -41,18 +41,23 @@ function UploadImage() {
     <div className="not_app">
       <Box
         sx={{
-          width: "100%",
-          height: "300px",
+          width: "500px",
+          height: "400px",
           backgroundColor: "lightgray",
+          borderRadius: "5px",
           display: "flex",
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "center",
           gap: "10px",
+          marginTop: "10px",
           marginBottom: "20px",
           border: "1px solid black",
           overflowY: "auto",
           padding: "10px",
+          "&::-webkit-scrollbar": {
+            display: "none", // Sakriva scroll traku u preglednicima baziranim na WebKit-u
+          },
         }}
       >
         {images.length > 0 ? (
@@ -60,7 +65,7 @@ function UploadImage() {
             <div
               key={index}
               style={{
-                width: "200px",
+                width: "300px",
                 height: "200px",
                 position: "relative",
                 margin: "5px",
@@ -68,6 +73,7 @@ function UploadImage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                overflowY: "auto",
                 backgroundColor: "white",
                 boxShadow: "0 0 5px rgba(0,0,0,0.5)",
               }}
@@ -115,7 +121,7 @@ function UploadImage() {
             </div>
           ))
         ) : (
-          <p>BLANK IMAGE</p>
+          <p>ADD IMAGE</p>
         )}
       </Box>
 
