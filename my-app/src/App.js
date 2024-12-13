@@ -12,17 +12,17 @@ import Login from "./pages/Login/Login";
 const App = () => {
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/items")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Dohvaćeni podaci:", data);
-        setItems(data);
-      })
-      .catch((error) => {
-        console.error("Došlo je do greške:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:5000/product")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("Dohvaćeni podaci:", data);
+  //       setItems(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Došlo je do greške:", error);
+  //     });
+  // }, []);
 
   return (
     <BrowserRouter>

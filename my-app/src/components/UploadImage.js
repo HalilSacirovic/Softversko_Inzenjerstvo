@@ -43,7 +43,7 @@ function UploadImage() {
         sx={{
           width: "500px",
           height: "400px",
-          backgroundColor: "lightgray",
+          backgroundColor: "whitesmoke",
           borderRadius: "5px",
           display: "flex",
           flexWrap: "wrap",
@@ -65,7 +65,7 @@ function UploadImage() {
             <div
               key={index}
               style={{
-                width: "300px",
+                width: "500px",
                 height: "200px",
                 position: "relative",
                 margin: "5px",

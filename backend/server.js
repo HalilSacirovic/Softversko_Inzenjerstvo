@@ -17,7 +17,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "electronichub_db",
+  database: "e-hub-db",
 });
 
 db.connect((err) => {
@@ -214,42 +214,67 @@ app.post("/users2", (req, res) => {
   );
 });
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+// POST route to add product
+app.post("/add-product", (req, res) => {
+  const productData = req.body;
+  const {
+    name,
+    manufacturer,
+    price,
+    description,
+    stock_quantity,
+    power_requirement,
+    form_factor,
+    warranty_period,
+    isLaptop,
+    screen_size,
+    screen_resolution,
+    battery_capacity,
+    weight,
+    is_touchscreen,
+    laptop_processor,
+    laptop_gpu,
+    laptop_ram,
+    laptop_storage,
+  } = productData;
 
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "Nedostaju korisničko ime ili lozinka",
-    });
-  }
+  // SQL query to insert data into the database
+  const query = `
+    INSERT INTO component (
+      name, manufacturer, price, description, stock_quantity, power_requirement, form_factor, warranty_period,
+      isLaptop, screen_size, screen_resolution, battery_capacity, 
+      weight, is_touchscreen, laptop_processor, laptop_gpu, laptop_ram, laptop_storage
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  console.log("Pokušaj prijave za korisnika:", email);
+  const values = [
+    name,
+    manufacturer,
+    price,
+    description,
+    stock_quantity,
+    power_requirement,
+    form_factor,
+    warranty_period,
+    isLaptop,
+    screen_size,
+    screen_resolution,
+    battery_capacity,
+    weight,
+    is_touchscreen,
+    laptop_processor,
+    laptop_gpu,
+    laptop_ram,
+    laptop_storage,
+  ];
 
-  const query = "SELECT * FROM users2 WHERE email = ? AND password = ?";
-  db.query(query, [email, password], (err, results) => {
+  db.query(query, values, (err, result) => {
     if (err) {
-      console.error("SQL greška:", err.sqlMessage);
-      return res
-        .status(500)
-        .json({ message: "Greška pri proveri korisnika", error: err });
+      console.error(err);
+      return res.status(500).json({ error: "Failed to add product" });
     }
-
-    if (results.length > 0) {
-      const user = results[0];
-      console.log("Korisnik pronađen:", user);
-
-      const token = "your-generated-token"; // JWT OVDE TREBA
-
-      return res.status(200).json({
-        message: "Prijava uspešna",
-        token: token,
-        userId: user.id,
-      });
-    } else {
-      console.log("Neuspešna prijava: Pogrešno korisničko ime ili lozinka");
-      return res.status(401).json({
-        message: "Pogrešno korisničko ime ili lozinka",
-      });
-    }
+    res.status(201).json({
+      message: "Product added successfully",
+      productId: result.insertId,
+    });
   });
 });
