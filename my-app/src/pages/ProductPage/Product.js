@@ -18,8 +18,26 @@ import { CategoriesNav } from "../../components/CateregoriesNav";
 import { purple } from "@mui/material/colors";
 import Specifications from "../../components/Specifications";
 import NestedList from "../../components/CollapseButton";
+import React from "react";
+import { useParams } from "react-router-dom";
 
 const Product = () => {
+  const params = useParams();
+  console.log(params);
+
+  const [data, setData] = React.useState({});
+  React.useEffect(() => {
+    fetch("http://localhost:5000/product/" + params.id)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Dohvaćeni produkti:", data);
+        setData(data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
+
   return (
     <Box>
       <NavBar />
@@ -41,16 +59,14 @@ const Product = () => {
           <Grid size={4}>
             <Box sx={{ height: 500 }}>
               <Box>
-                <Typography variant="h5">
-                  LENOVO IdeaPad 1 15ALC7 R7/8/512 82R400CTRM
-                </Typography>
+                <Typography variant="h5">{data.name}</Typography>
                 <Box>
                   <Rating name="size-medium" defaultValue={5} />
                   Review
                 </Box>
               </Box>
               <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h5">49.999 RSD</Typography>
+                <Typography variant="h5">{data.price} $</Typography>
               </Box>
               <Box sx={{ marginTop: 4 }}>
                 <Button

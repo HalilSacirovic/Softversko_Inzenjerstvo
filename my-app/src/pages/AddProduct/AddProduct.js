@@ -25,6 +25,7 @@ import Storage from "../../Categories/Storage";
 const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [productDetails, setProductDetails] = useState({});
+  const [key, setKey] = useState(null);
 
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
@@ -38,6 +39,7 @@ const AddProduct = () => {
   };
 
   const handleAddProduct = async () => {
+    const key = category;
     // Send only the necessary details: name, manufacturer, price, description
     const productData = {
       name: productDetails.name || "",
@@ -48,26 +50,68 @@ const AddProduct = () => {
       power_requirement: productDetails.power_requirement || null,
       form_factor: productDetails.form_factor || "",
       warranty_period: productDetails.warranty_period || 0,
-      isLaptop: 1, // Označava da je laptop
-      screen_size: productDetails.screen_size || "",
+      isGPU: productDetails.isGPU || 0,
+      isCPU: productDetails.isCPU || 0,
+      isPSU: productDetails.isPSU || 0,
+      isMotherboard: productDetails.isMotherboard || 0,
+      isRAM: productDetails.isRAM || 0,
+      isStorage: productDetails.isStorage || 0,
+      isDesktop: productDetails.isDesktop || 0,
+      isLaptop: productDetails.isLaptop || 0, // Označava da je laptop
+      screen_size: productDetails.screen_size || null,
       screen_resolution: productDetails.screen_resolution || "",
       battery_capacity: productDetails.battery_capacity || 0,
       weight: productDetails.weight || 0,
-      is_touchscreen: productDetails.is_touchscreen ? 1 : 0, // Pretvara boolean u 0/1
+      is_touchscreen: productDetails.is_touchscreen ? 1 : 0,
       laptop_processor: productDetails.laptop_processor || "",
       laptop_gpu: productDetails.laptop_gpu || "",
       laptop_ram: productDetails.laptop_ram || "",
       laptop_storage: productDetails.laptop_storage || "",
+      gpu_chipset: productDetails.gpu_chipset || null,
+      memory_size: productDetails.memory_size || null,
+      memory_type: productDetails.memory_type || "",
+      clock_speed: productDetails.clock_speed || null,
+      cores: productDetails.cores || null,
+      threads: productDetails.threads || null,
+      base_clock: productDetails.base_clock || null,
+      boost_clock: productDetails.boost_clock || null,
+      socket: productDetails.socket || "",
+      power_output: productDetails.power_output || null,
+      certification: productDetails.certification || "",
+      modularity: productDetails.modularity || "",
+      chipset: productDetails.chipset || "",
+      ram_slots: productDetails.ram_slots || null,
+      max_ram_capacity: productDetails.max_ram_capacity || null,
+      supported_ram_type: productDetails.supported_ram_type || "",
+      ram_capacity: productDetails.ram_capacity || null,
+      ram_speed: productDetails.ram_speed || null,
+      ram_latency: productDetails.ram_latency || "",
+      ram_type: productDetails.ram_type || "",
+      storage_capacity: productDetails.storage_capacity || null,
+      storage_type: productDetails.storage_type || "",
+      interface: productDetails.interface || "",
+      read_speed: productDetails.read_speed || null,
+      write_speed: productDetails.write_speed || null,
+      desktop_processor: productDetails.desktop_processor || "",
+      desktop_gpu: productDetails.desktop_gpu || "",
+      desktop_ram: productDetails.desktop_ram || "",
+      desktop_storage: productDetails.desktop_storage || "",
+      power_supply: productDetails.power_supply || "",
+      case_type: productDetails.case_type || "",
+      posted_by: productDetails.posted_by || "halil",
     };
 
     try {
-      const response = await fetch("http://localhost:5000/add-product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
+      const response = await fetch(
+        `http://localhost:5000/add-product?key=${key}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productData),
+        }
+      );
 
       const result = await response.json();
       if (response.status === 201) {

@@ -14,7 +14,21 @@ import { CategoriesNav } from "../../components/CateregoriesNav";
 const HomePage = () => {
   // const location = useLocation();
 
+  const [product, setProduct] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch("http://localhost:5000/products")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Dohvaćeni produkti:", data);
+        setProduct(data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
   const navigate = useNavigate();
+
   // console.log(location);
 
   // const user = {
@@ -40,33 +54,18 @@ const HomePage = () => {
             </div>
 
             <Grid container>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
-              <Grid size={4}>
-                <ProductCard />
-              </Grid>
+              {product.map((item) => {
+                return (
+                  <Grid size={4} key={item.id}>
+                    <ProductCard
+                      id={item.id}
+                      price={item.price}
+                      name={item.name}
+                      description={item.description}
+                    />
+                  </Grid>
+                );
+              })}
             </Grid>
           </div>
         </div>

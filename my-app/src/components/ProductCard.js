@@ -6,26 +6,32 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import laptop from "../assets/laptop.png";
+import { useNavigate } from "react-router-dom";
 
-export default function ProductCard() {
+export default function ProductCard(props) {
+  const navigate = useNavigate();
   return (
-    <Card sx={{ maxWidth: 255, marginLeft: 5, marginTop: 2 }}>
+    <Card sx={{ marginLeft: 5, marginTop: 2, height: 350 }}>
       <CardMedia
         component="img"
         alt="green iguana"
         height="170"
         image={laptop}
       />
-      <CardContent>
+      <CardContent
+        onClick={() => {
+          navigate("/product/" + props.id);
+        }}
+      >
         <Typography gutterBottom variant="h5" component="div">
-          Lenovo Laptop
+          {props.name}
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          Lenovo laptop with good battery life, good state good price
+          {props.description}
         </Typography>
       </CardContent>
       <CardActions>
-        <Typography variant="h5">$599.99</Typography>
+        <Typography variant="h5">${props.price}</Typography>
       </CardActions>
     </Card>
   );
