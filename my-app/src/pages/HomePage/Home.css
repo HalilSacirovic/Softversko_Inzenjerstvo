@@ -5,8 +5,12 @@
     font-family: cursive !important;
 }
 
+body{
+    background-color: #f2f2f2;
+}
 .navbar{
-   
+
+
     background-color: rgb(84, 164, 229);
 }
 
@@ -31,15 +35,8 @@
     padding-left: 15px;
 }
 
-.main-section{
 
-    display: block;
-    background-color: #f2f2f2;
-}
 
-.products{
-    display: flex;
-}
 
 
 .product_box{
@@ -47,18 +44,19 @@
     /* height: 400px; */
     
 }
-.products .filters {
-    width: 600px;
+/* .products .filters {
+    width: 500px;
     display: flex;
     flex-direction: column;
-    /* padding-right: 20px; */
-}
+    padding-right: 20px;
+} */
 
-.products .listed_products{
+/* .products .listed_products{
     display: flex;
-}
+} */
 .all-div{
 background-color: #f2f2f2;
+height: 100vh;
 }
 
 .nav_container{

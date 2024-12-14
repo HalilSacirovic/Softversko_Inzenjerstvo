@@ -3,9 +3,9 @@ import * as React from "react";
 import ProductCard from "../../components/ProductCard";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
-import NestedList from "../../components/CollapseButton";
+import NestedList from "../../components/NestedList";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ToggleButton, Typography } from "@mui/material";
+import { Box, ToggleButton, Typography } from "@mui/material";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import NavBar from "../../components/NavBar";
@@ -15,6 +15,8 @@ const HomePage = () => {
   // const location = useLocation();
 
   const [product, setProduct] = React.useState([]);
+  const [filteredProducts, setFilteredProducts] = React.useState([]);
+  const [filter, setFilter] = React.useState("all");
 
   React.useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -22,12 +24,26 @@ const HomePage = () => {
       .then((data) => {
         console.log("Dohvaćeni produkti:", data);
         setProduct(data);
+        setFilteredProducts(data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
   }, []);
   const navigate = useNavigate();
+  const handleFilter = (category) => {
+    setFilter(category); // Postavi trenutni filter
+    console.log(category);
+    if (category === "all") {
+      setFilteredProducts(product); // Prikazi sve proizvode
+    } else {
+      const filtered = product.filter((item) => {
+        return item[category];
+      });
+
+      setFilteredProducts(filtered);
+    }
+  };
 
   // console.log(location);
 
@@ -43,8 +59,15 @@ const HomePage = () => {
       <Container fixed>
         <div className="main-section">
           <CategoriesNav />
+          <div className="filters">
+            <button onClick={() => handleFilter("all")}>All</button>
+            <button onClick={() => handleFilter("isGPU")}>GPU</button>
+            <button onClick={() => handleFilter("isCPU")}>CPU</button>
+            <button onClick={() => handleFilter("isLaptop")}>Laptop</button>
+            <button onClick={() => handleFilter("isDesktop")}>Desktop</button>
+          </div>
 
-          <div className="products">
+          <Box sx={{ display: "flex" }}>
             <div className="filters">
               <NestedList name="Price" subname="$100,000- $200.000" />
               <NestedList name="Name" subname="Lenovo" />
@@ -54,9 +77,10 @@ const HomePage = () => {
             </div>
 
             <Grid container>
-              {product.map((item) => {
+              {filteredProducts.map((item) => {
+                // console.log("Prikazujem item:", item);
                 return (
-                  <Grid size={4} key={item.id}>
+                  <Grid item key={item.id}>
                     <ProductCard
                       id={item.id}
                       price={item.price}
@@ -67,7 +91,7 @@ const HomePage = () => {
                 );
               })}
             </Grid>
-          </div>
+          </Box>
         </div>
       </Container>
     </div>

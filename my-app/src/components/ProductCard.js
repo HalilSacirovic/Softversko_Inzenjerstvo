@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProductCard(props) {
   const navigate = useNavigate();
   return (
-    <Card sx={{ marginLeft: 5, marginTop: 2, height: 350 }}>
+    <Card sx={{ width: 250, marginLeft: 5, marginTop: 2, height: 330 }}>
       <CardMedia
         component="img"
         alt="green iguana"

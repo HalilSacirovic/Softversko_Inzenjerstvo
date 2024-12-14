@@ -17,7 +17,7 @@ import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
 import { purple } from "@mui/material/colors";
 import Specifications from "../../components/Specifications";
-import NestedList from "../../components/CollapseButton";
+import NestedList from "../../components/NestedList";
 import React from "react";
 import { useParams } from "react-router-dom";
 
