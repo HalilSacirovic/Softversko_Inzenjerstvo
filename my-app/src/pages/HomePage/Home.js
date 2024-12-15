@@ -65,6 +65,11 @@ const HomePage = () => {
             <button onClick={() => handleFilter("isCPU")}>CPU</button>
             <button onClick={() => handleFilter("isLaptop")}>Laptop</button>
             <button onClick={() => handleFilter("isDesktop")}>Desktop</button>
+            <button onClick={() => handleFilter("isMotherboard")}>
+              Motherboard
+            </button>
+            <button onClick={() => handleFilter("isRAM")}>RAM</button>
+            <button onClick={() => handleFilter("isStorage")}>Storage</button>
           </div>
 
           <Box sx={{ display: "flex" }}>
