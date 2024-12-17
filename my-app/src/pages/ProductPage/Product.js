@@ -103,19 +103,10 @@ const Product = () => {
             <Box sx={{ marginTop: 5 }}>
               <NestedList
                 name="Specifications"
-                subname={<Specifications />}
+                subname={<Specifications data={data} />}
                 width="500"
               />
-              <NestedList
-                name="Reviews"
-                subname={<Specifications />}
-                width="500"
-              />
-              <NestedList
-                name="Description"
-                subname={<Specifications />}
-                width="500"
-              />
+              <NestedList name="Reviews" subname="reviews ovde" width="500" />
             </Box>
           </Grid>
         </Grid>
