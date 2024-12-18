@@ -10,6 +10,7 @@ import User from "./pages/User/User";
 import Login from "./pages/Login/Login";
 import AdminPage from "./pages/AdminPage/AdminPage";
 import UserTable from "./pages/AdminPage/ListUsers";
+import ProductList from "./pages/AdminPage/ProductList";
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/users" element={<UserTable />} />
+        <Route path="/admin/products" element={<ProductList />} />
         <Route path="/addproduct" element={<AddProduct />} />
       </Routes>
     </BrowserRouter>

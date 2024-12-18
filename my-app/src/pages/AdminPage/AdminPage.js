@@ -44,11 +44,11 @@ const AdminPage = () => {
               <div className="dashboard-card dashboard-card-danger">
                 <div className="dashboard-card-body">
                   <div className="dashboard-card-text">
-                    Orders
+                    Products
                     <br /> <b>{4}</b>
                   </div>
                 </div>
-                <Link className="dashboard-card-footer" to="/admin/orders">
+                <Link className="dashboard-card-footer" to="/admin/products">
                   <span className="float-left">View Details</span>
                   <span className="float-right">
                     <i className="fa fa-angle-right"></i>
