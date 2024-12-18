@@ -1,0 +1,32 @@
+.sidebar-wrapper {
+    width: 250px;
+    background-color: rgba(3,38,44,255); 
+    height: 100vh;
+    position: fixed; 
+    overflow-y: auto; 
+}
+
+#sidebar {
+    padding: 20px;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-link {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link:hover {
+    background-color: #495057;
+}
+
+.sidebar-link i {
+    margin-right: 10px;
+}

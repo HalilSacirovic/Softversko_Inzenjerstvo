@@ -28,9 +28,8 @@ db.connect((err) => {
   }
 });
 
-/// USERS /////////////////////
-app.get("/user2", (req, res) => {
-  db.query("SELECT * FROM user2", (err, results) => {
+app.get("/users", (req, res) => {
+  db.query("SELECT * FROM ehub_user", (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -72,216 +71,84 @@ app.post("/user2", (req, res) => {
 });
 
 ////////////////////////////////////////////////////////////////////////
-
-app.get("/items", (req, res) => {
-  db.query("SELECT * FROM items", (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(results);
-  });
-});
-
-app.post("/items", (req, res) => {
-  const { name, category, price, description, brand, model } = req.body;
-
-  console.log("Podaci za unos:", {
-    name,
-    category,
-    price,
-    description,
-    brand,
-    model,
-  });
-
-  const query =
-    "INSERT INTO items (name, category, price, description,brand,model) VALUES (?, ?, ?, ?, ?, ?)";
-
-  db.query(
-    query,
-    [name, category, price, description, brand, model],
-    (err, result) => {
-      if (err) {
-        console.error("SQL greška:", err.sqlMessage);
-        res
-          .status(500)
-          .json({ message: "Greška pri unosu korisnika", error: err });
-      } else {
-        res.status(201).json({
-          message: "Korisnik uspešno dodat",
-          userId: result.insertId,
-        });
-      }
-    }
-  );
-});
-
-app.patch("/items/:id", (req, res) => {
+app.patch("/user/:id", (req, res) => {
   const { id } = req.params;
-  const { name, category, price, condition, description, brand, model } =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    username,
+    email,
+    city,
+    country,
+    address,
+    isAdmin,
+    phone_number,
+    profile_picture_url,
+    bio,
+  } = req.body;
+
+  console.log("Received data:", req.body); // Logujte primljene podatke
 
   const query = `
-    UPDATE items
-    SET name = ?, category = ?, price = ?, condition = ?, description = ?, brand = ?, model = ?
+    UPDATE ehub_user
+    SET first_name = ?, 
+        last_name = ?, 
+        username = ?,  
+        email = ?, 
+        city = ?, 
+        country = ?, 
+        address = ?, 
+        isAdmin = ?, 
+        phone_number = ?, 
+        profile_picture_url = ?, 
+        bio = ?
     WHERE id = ?
   `;
   const values = [
-    name,
-    category,
-    price,
-    condition,
-    description,
-    brand,
-    model,
+    first_name,
+    last_name,
+    username,
+    email,
+    city,
+    country,
+    address,
+    isAdmin,
+    phone_number,
+    profile_picture_url,
+    bio,
     id,
   ];
 
   db.query(query, values, (err, result) => {
     if (err) {
+      console.error("Database Error:", err);
       return res.status(500).json({ error: err.message });
     }
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Proizvod nije pronađen" });
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
     }
-    res.json({ message: "Proizvod je uspešno ažuriran" });
+    res.json({ message: "Korisnik je uspešno ažuriran" });
   });
 });
 
-app.post("/users2", (req, res) => {
-  const {
-    username,
-    firstName,
-    lastName,
-    email,
-    password,
-    phoneNum,
-    street,
-    city,
-    postalCode,
-    country,
-    dateOfBirth,
-    profilePicture,
-  } = req.body;
+app.delete("/user/:id", (req, res) => {
+  const { id } = req.params;
 
-  console.log("Podaci za unos:", {
-    username,
-    firstName,
-    lastName,
-    email,
-    password,
-    phoneNum,
-    street,
-    city,
-    postalCode,
-    country,
-    dateOfBirth,
-    profilePicture,
-  });
+  const query = "DELETE FROM ehub_user WHERE id = ?";
 
-  const query =
-    "INSERT INTO users2 (username, firstName, lastName,email,password,phoneNum,street,city,postalCode,country,dateOfBirth,profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-  db.query(
-    query,
-    [
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-      phoneNum,
-      street,
-      city,
-      postalCode,
-      country,
-      dateOfBirth,
-      profilePicture,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("SQL greška:", err.sqlMessage);
-        res
-          .status(500)
-          .json({ message: "Greška pri unosu korisnika", error: err });
-      } else {
-        res.status(201).json({
-          message: "Korisnik uspešno dodat",
-          userId: result.insertId,
-        });
-      }
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: err.message });
     }
-  );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
+
+    res.json({ message: "Korisnik je uspešno obrisan" });
+  });
 });
-
-// POST route to add product
-// app.post("/add-product", (req, res) => {
-//   const productData = req.body;
-//   const key = req.query;
-//   console.log(key, "key");
-//   const {
-//     name,
-//     manufacturer,
-//     price,
-//     description,
-//     stock_quantity,
-//     power_requirement,
-//     form_factor,
-//     warranty_period,
-//     isLaptop,
-//     screen_size,
-//     screen_resolution,
-//     battery_capacity,
-//     weight,
-//     is_touchscreen,
-//     laptop_processor,
-//     laptop_gpu,
-//     laptop_ram,
-//     laptop_storage,
-//   } = productData;
-
-//   // SQL query to insert data into the database
-//   const query = `
-//     INSERT INTO component (
-//       name, manufacturer, price, description, stock_quantity, power_requirement, form_factor, warranty_period,
-//       isLaptop, screen_size, screen_resolution, battery_capacity,
-//       weight, is_touchscreen, laptop_processor, laptop_gpu, laptop_ram, laptop_storage
-//     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-//   const values = [
-//     name,
-//     manufacturer,
-//     price,
-//     description,
-//     stock_quantity,
-//     power_requirement,
-//     form_factor,
-//     warranty_period,
-//     isLaptop,
-//     screen_size,
-//     screen_resolution,
-//     battery_capacity,
-//     weight,
-//     is_touchscreen,
-//     laptop_processor,
-//     laptop_gpu,
-//     laptop_ram,
-//     laptop_storage,
-//   ];
-
-//   db.query(query, values, (err, result) => {
-//     if (err) {
-//       console.error(err);
-//       return res.status(500).json({ error: "Failed to add product" });
-//     }
-//     res.status(201).json({
-//       message: "Product added successfully",
-//       productId: result.insertId,
-//     });
-//   });
-// });
-
-// TEST OVDE ZA ADD RPODUCT
 
 app.post("/add-product", (req, res) => {
   const productData = req.body; // Podaci o proizvodu prosleđeni iz forme

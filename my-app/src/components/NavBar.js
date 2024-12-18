@@ -24,8 +24,21 @@ const NavBar = () => {
               >
                 User
               </li>
+              <li
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Home
+              </li>
               <li>Favorite</li>
-              <li>Admin</li>
+              <li
+                onClick={() => {
+                  navigate("/admin");
+                }}
+              >
+                Admin
+              </li>
               <li
                 onClick={() => {
                   navigate("/addproduct");

@@ -5,11 +5,12 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
 import NestedList from "../../components/NestedList";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, ToggleButton, Typography } from "@mui/material";
+import { Box, Slider, ToggleButton, Typography } from "@mui/material";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
+import RangeSlider from "../../components/Slider";
 
 const HomePage = () => {
   // const location = useLocation();
@@ -74,7 +75,7 @@ const HomePage = () => {
 
           <Box sx={{ display: "flex" }}>
             <div className="filters">
-              <NestedList name="Price" subname="$100,000- $200.000" />
+              <NestedList name="Price" subname={<RangeSlider />} />
               <NestedList name="Name" subname="Lenovo" />
               <NestedList name="Manufacturer" subname="Lenovo" />
               <NestedList name="State" subname="NEW" />
