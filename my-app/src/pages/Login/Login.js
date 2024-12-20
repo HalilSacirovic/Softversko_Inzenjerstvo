@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   return (
     <div className="div">
       <div className="box">
@@ -29,7 +31,7 @@ const Login = () => {
               }
               return errors;
             }}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, { setSubmitting, setErrors }) => {
               fetch("http://localhost:5000/login", {
                 method: "POST",
                 body: JSON.stringify(values),
@@ -37,15 +39,23 @@ const Login = () => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((res) => res.json())
+                .then((res) => {
+                  if (!res.ok) {
+                    throw new Error("Prijava neuspešna");
+                  }
+                  return res.json();
+                })
                 .then((data) => {
                   if (data.token) {
-                    console.log("RADI VALJDA ", data);
                     localStorage.setItem("auth_token", data.token);
-                    localStorage.setItem("userId", data.userId);
-                    setSubmitting(false);
+                    navigate("/");
                   }
-                });
+                })
+                .catch((err) => {
+                  console.error(err);
+                  setErrors({ email: "Neuspešna prijava. Proverite podatke." });
+                })
+                .finally(() => setSubmitting(false));
             }}
           >
             {({

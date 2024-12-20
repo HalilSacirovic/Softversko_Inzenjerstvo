@@ -70,6 +70,72 @@ app.post("/user2", (req, res) => {
   );
 });
 
+const jwt = require("jsonwebtoken"); // Dodaj ovu liniju
+const secretKey = JWT_TOKEN; // Definiši tajni ključ (čuvaj ga sigurnim!)
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"]; // Očekuje se token u `Authorization` zaglavlju
+  if (!token) {
+    return res.status(403).json({ message: "Token nije obezbeđen" });
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Nevalidan token" });
+    }
+    req.user = decoded; // Dekodirani podaci o korisniku
+    next();
+  });
+};
+
+app.get("/protected-route", verifyToken, (req, res) => {
+  res
+    .status(200)
+    .json({ message: "Uspešno pristupljeno zaštićenoj ruti", user: req.user });
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Nedostaju korisničko ime ili lozinka",
+    });
+  }
+  console.log("Pokušaj prijave za korisnika:", email);
+
+  const query = "SELECT * FROM ehub_user WHERE email = ? AND password_hash = ?";
+  db.query(query, [email, password], (err, results) => {
+    if (err) {
+      console.error("SQL greška:", err.sqlMessage);
+      return res
+        .status(500)
+        .json({ message: "Greška pri proveri korisnika", error: err });
+    }
+
+    if (results.length > 0) {
+      const user = results[0];
+      console.log("Korisnik pronađen:", user);
+
+      // Generisanje JWT tokena
+      const token = jwt.sign(
+        { userId: user.id, email: user.email }, // Payload tokena
+        secretKey, // Tajni ključ
+        { expiresIn: "2h" } // Token ističe za 2 sata
+      );
+
+      return res.status(200).json({
+        message: "Prijava uspešna",
+        token: token,
+        userId: user.id,
+      });
+    } else {
+      console.log("Neuspešna prijava: Pogrešno korisničko ime ili lozinka");
+      return res.status(401).json({
+        message: "Pogrešno korisničko ime ili lozinka",
+      });
+    }
+  });
+});
+
 ////////////////////////////////////////////////////////////////////////
 app.patch("/user/:id", (req, res) => {
   const { id } = req.params;

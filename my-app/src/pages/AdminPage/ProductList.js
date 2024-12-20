@@ -19,9 +19,12 @@ const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Processor</TableCell>
               <TableCell>RAM</TableCell>
               <TableCell>Storage</TableCell>
@@ -34,9 +37,13 @@ const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
           <TableBody>
             {laptops.map((laptop) => (
               <TableRow key={laptop.id}>
+                <TableCell>{laptop.id}</TableCell>
                 <TableCell>{laptop.name}</TableCell>
                 <TableCell>{laptop.manufacturer}</TableCell>
-                <TableCell>{laptop.model}</TableCell>
+                <TableCell>{laptop.price}</TableCell>
+                <TableCell>{laptop.stock_quantity}</TableCell>
+
+                <TableCell>{laptop.warranty_period}</TableCell>
                 <TableCell>{laptop.laptop_processor}</TableCell>
                 <TableCell>{laptop.laptop_ram} GB</TableCell>
                 <TableCell>{laptop.laptop_storage} GB</TableCell>
@@ -78,9 +85,12 @@ const DesktopTable = ({ desktops, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Processor</TableCell>
               <TableCell>RAM</TableCell>
               <TableCell>GPU</TableCell>
@@ -93,9 +103,13 @@ const DesktopTable = ({ desktops, handleEdit, handleDelete }) => {
           <TableBody>
             {desktops.map((desktop) => (
               <TableRow key={desktop.id}>
+                <TableCell>{desktop.id}</TableCell>
                 <TableCell>{desktop.name}</TableCell>
                 <TableCell>{desktop.manufacturer}</TableCell>
-                <TableCell>{desktop.model}</TableCell>
+                <TableCell>{desktop.price}</TableCell>
+                <TableCell>{desktop.stock_quantity}</TableCell>
+
+                <TableCell>{desktop.warranty_period}</TableCell>
                 <TableCell>{desktop.desktop_processor}</TableCell>
                 <TableCell>{desktop.desktop_ram} GB</TableCell>
                 <TableCell>{desktop.desktop_gpu}</TableCell>
@@ -137,9 +151,12 @@ const CPUTable = ({ cpus, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Cores</TableCell>
               <TableCell>Threads</TableCell>
               <TableCell>Base Clock</TableCell>
@@ -152,9 +169,13 @@ const CPUTable = ({ cpus, handleEdit, handleDelete }) => {
           <TableBody>
             {cpus.map((cpu) => (
               <TableRow key={cpu.id}>
+                <TableCell>{cpu.id}</TableCell>
                 <TableCell>{cpu.name}</TableCell>
                 <TableCell>{cpu.manufacturer}</TableCell>
-                <TableCell>{cpu.model}</TableCell>
+                <TableCell>{cpu.price}</TableCell>
+                <TableCell>{cpu.stock_quantity}</TableCell>
+
+                <TableCell>{cpu.warranty_period}</TableCell>
                 <TableCell>{cpu.cores}</TableCell>
                 <TableCell>{cpu.threads}</TableCell>
                 <TableCell>{cpu.base_clock} GHz</TableCell>
@@ -196,9 +217,12 @@ const GPTable = ({ gpus, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>VRAM</TableCell>
               <TableCell>Core Clock</TableCell>
               <TableCell>Boost Clock</TableCell>
@@ -210,9 +234,13 @@ const GPTable = ({ gpus, handleEdit, handleDelete }) => {
           <TableBody>
             {gpus.map((gpu) => (
               <TableRow key={gpu.id}>
+                <TableCell>{gpu.id}</TableCell>
                 <TableCell>{gpu.name}</TableCell>
                 <TableCell>{gpu.manufacturer}</TableCell>
-                <TableCell>{gpu.model}</TableCell>
+                <TableCell>{gpu.price}</TableCell>
+                <TableCell>{gpu.stock_quantity}</TableCell>
+
+                <TableCell>{gpu.warranty_period}</TableCell>
                 <TableCell>{gpu.vram} GB</TableCell>
                 <TableCell>{gpu.core_clock} MHz</TableCell>
                 <TableCell>{gpu.boost_clock} MHz</TableCell>
@@ -253,9 +281,12 @@ const PSUTable = ({ psus, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Wattage</TableCell>
               <TableCell>Certification</TableCell>
               <TableCell>User Rating</TableCell>
@@ -265,9 +296,13 @@ const PSUTable = ({ psus, handleEdit, handleDelete }) => {
           <TableBody>
             {psus.map((psu) => (
               <TableRow key={psu.id}>
+                <TableCell>{psu.id}</TableCell>
                 <TableCell>{psu.name}</TableCell>
                 <TableCell>{psu.manufacturer}</TableCell>
-                <TableCell>{psu.model}</TableCell>
+                <TableCell>{psu.price}</TableCell>
+                <TableCell>{psu.stock_quantity}</TableCell>
+
+                <TableCell>{psu.warranty_period}</TableCell>
                 <TableCell>{psu.wattage} W</TableCell>
                 <TableCell>{psu.certification}</TableCell>
                 <TableCell>{psu.user_rating}</TableCell>
@@ -306,9 +341,12 @@ const RAMTable = ({ rams, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Capacity</TableCell>
               <TableCell>Speed</TableCell>
               <TableCell>Type</TableCell>
@@ -319,9 +357,13 @@ const RAMTable = ({ rams, handleEdit, handleDelete }) => {
           <TableBody>
             {rams.map((ram) => (
               <TableRow key={ram.id}>
+                <TableCell>{ram.id}</TableCell>
                 <TableCell>{ram.name}</TableCell>
                 <TableCell>{ram.manufacturer}</TableCell>
-                <TableCell>{ram.model}</TableCell>
+                <TableCell>{ram.price}</TableCell>
+                <TableCell>{ram.stock_quantity}</TableCell>
+
+                <TableCell>{ram.warranty_period}</TableCell>
                 <TableCell>{ram.capacity} GB</TableCell>
                 <TableCell>{ram.speed} MHz</TableCell>
                 <TableCell>{ram.type}</TableCell>
@@ -361,9 +403,12 @@ const StorageTable = ({ storages, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Capacity</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>User Rating</TableCell>
@@ -373,9 +418,13 @@ const StorageTable = ({ storages, handleEdit, handleDelete }) => {
           <TableBody>
             {storages.map((storage) => (
               <TableRow key={storage.id}>
+                <TableCell>{storage.id}</TableCell>
                 <TableCell>{storage.name}</TableCell>
                 <TableCell>{storage.manufacturer}</TableCell>
-                <TableCell>{storage.model}</TableCell>
+                <TableCell>{storage.price}</TableCell>
+                <TableCell>{storage.stock_quantity}</TableCell>
+
+                <TableCell>{storage.warranty_period}</TableCell>
                 <TableCell>{storage.capacity} GB</TableCell>
                 <TableCell>{storage.type}</TableCell>
                 <TableCell>{storage.user_rating}</TableCell>
@@ -414,11 +463,14 @@ const MotherboardTable = ({ motherboards, handleEdit, handleDelete }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock Quantity</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>Socket</TableCell>
-              <TableCell>Form Factor</TableCell>
+              <TableCell>Warranty Period</TableCell>
               <TableCell>User Rating</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -426,11 +478,14 @@ const MotherboardTable = ({ motherboards, handleEdit, handleDelete }) => {
           <TableBody>
             {motherboards.map((motherboard) => (
               <TableRow key={motherboard.id}>
+                <TableCell>{motherboard.id}</TableCell>
                 <TableCell>{motherboard.name}</TableCell>
                 <TableCell>{motherboard.manufacturer}</TableCell>
-                <TableCell>{motherboard.model}</TableCell>
+                <TableCell>{motherboard.price}</TableCell>
+                <TableCell>{motherboard.stock_quantity}</TableCell>
+
+                <TableCell>{motherboard.warranty_period}</TableCell>
                 <TableCell>{motherboard.socket}</TableCell>
-                <TableCell>{motherboard.form_factor}</TableCell>
                 <TableCell>{motherboard.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button

@@ -11,6 +11,7 @@ import Login from "./pages/Login/Login";
 import AdminPage from "./pages/AdminPage/AdminPage";
 import UserTable from "./pages/AdminPage/ListUsers";
 import ProductList from "./pages/AdminPage/ProductList";
+import Favorites from "./pages/Favorite/Favorite";
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/admin/users" element={<UserTable />} />
         <Route path="/admin/products" element={<ProductList />} />
         <Route path="/addproduct" element={<AddProduct />} />
+        <Route path="/favorites" element={<Favorites />} />
       </Routes>
     </BrowserRouter>
   );
