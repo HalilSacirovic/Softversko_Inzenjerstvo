@@ -21,6 +21,7 @@ import Psu from "../../Categories/Psu";
 import MotherBoard from "../../Categories/MotherBoard";
 import Ram from "../../Categories/Ram";
 import Storage from "../../Categories/Storage";
+import { useSelector } from "react-redux";
 
 const AddProduct = () => {
   const [category, setCategory] = useState("");
@@ -38,9 +39,12 @@ const AddProduct = () => {
     }));
   };
 
+  const currentUser = useSelector((state) => state.auth.userId);
+  console.log("trenutni user", currentUser);
+
   const handleAddProduct = async () => {
     const key = category;
-    // Send only the necessary details: name, manufacturer, price, description
+
     const productData = {
       name: productDetails.name || "",
       manufacturer: productDetails.manufacturer || "",
@@ -98,7 +102,7 @@ const AddProduct = () => {
       desktop_storage: productDetails.desktop_storage || "",
       power_supply: productDetails.power_supply || "",
       case_type: productDetails.case_type || "",
-      posted_by: productDetails.posted_by || "halil",
+      posted_by: currentUser,
     };
 
     try {
@@ -116,6 +120,7 @@ const AddProduct = () => {
       const result = await response.json();
       if (response.status === 201) {
         console.log(result.message);
+        console.log("product data", productData);
       } else {
         console.error(result.error);
       }

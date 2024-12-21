@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const RAM = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [ramDetails, setRamDetails] = useState({
     name: "",
     manufacturer: "",
@@ -12,6 +14,7 @@ const RAM = ({ onSubmit }) => {
     ram_speed: 0, // MHz
     ram_latency: "",
     ram_type: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

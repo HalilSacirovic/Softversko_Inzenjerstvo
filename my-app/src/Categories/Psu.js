@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const PSU = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [psuDetails, setPsuDetails] = useState({
     name: "",
     manufacturer: "",
@@ -13,6 +15,7 @@ const PSU = ({ onSubmit }) => {
     power_output: "",
     certification: "",
     modularity: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

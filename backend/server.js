@@ -234,7 +234,10 @@ app.post("/add-product", (req, res) => {
     productData.description,
     productData.stock_quantity || 0,
     productData.warranty_period || null,
+    productData.posted_by,
   ];
+
+  console.log("COMMOM VALUES", commonValues);
 
   let query = "";
   let values = [];
@@ -243,10 +246,10 @@ app.post("/add-product", (req, res) => {
     case 1: // Laptop
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isLaptop, screen_size, screen_resolution, battery_capacity,
           weight, is_touchscreen, laptop_processor, laptop_gpu, laptop_ram, laptop_storage
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -265,9 +268,9 @@ app.post("/add-product", (req, res) => {
     case 2: // Desktop
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isDesktop, form_factor, desktop_processor, desktop_gpu, desktop_ram, desktop_storage, power_supply, case_type
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -284,9 +287,9 @@ app.post("/add-product", (req, res) => {
     case 3: // CPU
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isCPU, clock_speed, cores, threads, base_clock, boost_clock, socket
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -302,9 +305,9 @@ app.post("/add-product", (req, res) => {
     case 4: // GPU
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isGPU, gpu_chipset, memory_size, memory_type, clock_speed
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -318,9 +321,9 @@ app.post("/add-product", (req, res) => {
     case 5: // PSU
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isPSU, power_requirement, power_output, certification, modularity
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -334,9 +337,9 @@ app.post("/add-product", (req, res) => {
     case 6: // Motherboard
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isMotherboard, chipset, ram_slots, max_ram_capacity, supported_ram_type
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -350,9 +353,9 @@ app.post("/add-product", (req, res) => {
     case 7: // RAM
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isRAM, ram_capacity, ram_speed, ram_latency, ram_type
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,
@@ -366,9 +369,9 @@ app.post("/add-product", (req, res) => {
     case 8: // Storage
       query = `
         INSERT INTO component (
-          name, manufacturer, price, description, stock_quantity, warranty_period,
+          name, manufacturer, price, description, stock_quantity, warranty_period,posted_by,
           isStorage, storage_capacity, storage_type, interface, read_speed, write_speed
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?,?, 1, ?, ?, ?, ?, ?);
       `;
       values = [
         ...commonValues,

@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Storage = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [storageDetails, setStorageDetails] = useState({
     name: "",
     manufacturer: "",
@@ -13,6 +15,7 @@ const Storage = ({ onSubmit }) => {
     interface: "",
     read_speed: 0, // MB/s
     write_speed: 0, // MB/s
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

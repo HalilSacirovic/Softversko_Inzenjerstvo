@@ -23,7 +23,6 @@ const HomePage = () => {
     fetch("http://localhost:5000/products")
       .then((response) => response.json())
       .then((data) => {
-        console.log("Dohvaćeni produkti:", data);
         setProduct(data);
         setFilteredProducts(data);
       })
@@ -34,7 +33,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const handleFilter = (category) => {
     setFilter(category); // Postavi trenutni filter
-    console.log(category);
+
     if (category === "all") {
       setFilteredProducts(product); // Prikazi sve proizvode
     } else {
@@ -45,8 +44,6 @@ const HomePage = () => {
       setFilteredProducts(filtered);
     }
   };
-
-  // console.log(location);
 
   // const user = {
   //   id: 1,
@@ -84,7 +81,6 @@ const HomePage = () => {
 
             <Grid container>
               {filteredProducts.map((item) => {
-                // console.log("Prikazujem item:", item);
                 return (
                   <Grid item key={item.id}>
                     <ProductCard

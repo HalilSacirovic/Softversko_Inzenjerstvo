@@ -8,8 +8,10 @@ import {
   InputLabel,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Laptop = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [laptopDetails, setLaptopDetails] = useState({
     name: "",
     manufacturer: "",
@@ -29,6 +31,7 @@ const Laptop = ({ onSubmit }) => {
     laptop_gpu: "",
     laptop_ram: "",
     laptop_storage: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

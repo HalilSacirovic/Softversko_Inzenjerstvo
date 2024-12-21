@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Motherboard = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [motherboardDetails, setMotherboardDetails] = useState({
     name: "",
     manufacturer: "",
@@ -13,6 +15,7 @@ const Motherboard = ({ onSubmit }) => {
     max_ram_capacity: 0, // GB
     supported_ram_type: "",
     socket: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

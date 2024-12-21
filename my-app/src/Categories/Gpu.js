@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const GPU = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [gpuDetails, setGpuDetails] = useState({
     name: "",
     manufacturer: "",
@@ -14,6 +16,7 @@ const GPU = ({ onSubmit }) => {
     memory_size: "",
     memory_type: "",
     clock_speed: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

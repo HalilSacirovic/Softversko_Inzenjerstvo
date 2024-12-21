@@ -8,8 +8,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Desktop = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [desktopDetails, setDesktopDetails] = useState({
     name: "",
     manufacturer: "",
@@ -25,6 +27,7 @@ const Desktop = ({ onSubmit }) => {
     desktop_storage: "",
     power_supply: "",
     case_type: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {

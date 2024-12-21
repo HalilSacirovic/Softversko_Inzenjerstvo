@@ -1,7 +1,9 @@
 import { Box, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Cpu = ({ onSubmit }) => {
+  const currentUser = useSelector((state) => state.auth.userId);
   const [cpuDetails, setCpuDetails] = useState({
     name: "",
     manufacturer: "",
@@ -15,6 +17,7 @@ const Cpu = ({ onSubmit }) => {
     base_clock: "",
     boost_clock: "",
     socket: "",
+    posted_by: currentUser,
   });
 
   const handleChange = (e) => {
