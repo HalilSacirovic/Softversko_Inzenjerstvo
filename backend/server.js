@@ -71,7 +71,10 @@ app.post("/user2", (req, res) => {
 });
 
 const jwt = require("jsonwebtoken"); // Dodaj ovu liniju
-const secretKey = JWT_TOKEN; // Definiši tajni ključ (čuvaj ga sigurnim!)
+require("dotenv").config();
+
+const secretKey = process.env.JWT_TOKEN;
+// Definiši tajni ključ (čuvaj ga sigurnim!)
 const verifyToken = (req, res, next) => {
   const token = req.headers["authorization"]; // Očekuje se token u `Authorization` zaglavlju
   if (!token) {
