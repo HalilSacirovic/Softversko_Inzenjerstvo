@@ -412,7 +412,17 @@ app.get("/products", (req, res) => {
 app.get("/product/:id", (req, res) => {
   const { id } = req.params;
 
-  const query = "SELECT * FROM component WHERE id = ?";
+  const query = ` SELECT 
+      p.*, 
+      u.id AS user_id, 
+      u.first_name AS user_name, 
+      u.last_name AS user_lastname, 
+      u.username AS username, 
+      u.email AS user_email, 
+      u.phone_number AS user_phone 
+    FROM component p
+    JOIN ehub_user u ON p.posted_by = u.id
+    WHERE p.id = ?`;
 
   db.query(query, [id], (err, result) => {
     if (err) {
@@ -422,5 +432,36 @@ app.get("/product/:id", (req, res) => {
       return res.status(404).json({ message: "Proizvod nije pronađen" });
     }
     res.json(result[0]); // Vraća podatke o proizvodu
+  });
+});
+
+app.post("/reviews_product", (req, res) => {
+  const { component_id, user_id, rating, comment } = req.body;
+
+  // Proveravamo da li su svi podaci prisutni
+  if (!component_id || !user_id || !rating || rating < 1 || rating > 5) {
+    return res.status(400).json({
+      error: "Svi podaci su obavezni i ocena mora biti između 1 i 5.",
+    });
+  }
+
+  // Upit za unos recenzije u bazu podataka
+  const query = `
+    INSERT INTO productreview (component_id, user_id, rating, comment)
+    VALUES (?, ?, ?, ?)`;
+
+  // Izvršavanje upita
+  db.query(query, [component_id, user_id, rating, comment], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ error: "Došlo je do greške prilikom unosa recenzije." });
+    }
+
+    // Vraćanje uspešne odgovora
+    res.status(201).json({
+      message: "Recenzija uspešno postavljena!",
+      reviewId: result.insertId, // ID novo ubačene recenzije
+    });
   });
 });
