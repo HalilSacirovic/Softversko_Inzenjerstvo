@@ -114,7 +114,7 @@ const EditUserModal = ({ open, user, onClose, onSave, onChange }) => {
         <TextField
           label="Is Admin"
           name="isAdmin"
-          value={user.isAdmin ? "Yes" : "No"}
+          value={user.isAdmin ? 1 : 0}
           onChange={onChange}
           //   disabled
           fullWidth

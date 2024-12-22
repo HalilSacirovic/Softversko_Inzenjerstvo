@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import "./SignUp.css";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const SignUp = () => {
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const params = useParams();
-
-  console.log("params ", params);
-
-  console.log(location);
   return (
     <div className="div">
       <div className="box">
@@ -30,15 +24,16 @@ const SignUp = () => {
               email: "",
               password: "",
               username: "",
-              firstName: "",
-              lastName: "",
-              phoneNum: "",
-              street: "",
+              first_name: "",
+              last_name: "",
+              phone_number: "",
+              address: "",
               city: "",
-              postalCode: "",
+              postal_code: "",
               country: "",
-              dateOfBirth: "",
-              profilePicture: "",
+              date_of_birth: "",
+              profile_picture_url: "",
+              bio: "",
             }}
             validate={(values) => {
               const errors = {};
@@ -55,13 +50,16 @@ const SignUp = () => {
               if (!values.username) {
                 errors.username = "Username is required";
               }
-              if (!values.dateOfBirth) {
-                errors.dateOfBirth = "Date of birth is required";
+              if (!values.first_name) {
+                errors.first_name = "First name is required";
+              }
+              if (!values.last_name) {
+                errors.last_name = "Last name is required";
               }
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-              fetch("http://localhost:5000/users2", {
+              fetch("http://localhost:5000/signup", {
                 method: "POST",
                 body: JSON.stringify(values),
                 headers: {
@@ -71,11 +69,16 @@ const SignUp = () => {
                 .then((res) => res.json())
                 .then((data) => {
                   if (data.token) {
-                    console.log("RADI VALJDA ", data);
+                    console.log("Korisnik registrovan", data);
                     localStorage.setItem("auth_token", data.token);
                     localStorage.setItem("userId", data.userId);
                     setSubmitting(false);
                   }
+                  navigate("/"); // Redirekcija nakon uspešne registracije
+                })
+                .catch((error) => {
+                  console.error("Greška pri slanju podataka:", error);
+                  setSubmitting(false);
                 });
             }}
           >
@@ -143,11 +146,14 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="text"
-                    name="firstName"
+                    name="first_name"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.firstName}
+                    value={values.first_name}
                   />
+                  {errors.first_name && touched.first_name && (
+                    <div style={{ color: "red" }}>{errors.first_name}</div>
+                  )}
                 </div>
 
                 {/* Last Name */}
@@ -156,11 +162,14 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="text"
-                    name="lastName"
+                    name="last_name"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.lastName}
+                    value={values.last_name}
                   />
+                  {errors.last_name && touched.last_name && (
+                    <div style={{ color: "red" }}>{errors.last_name}</div>
+                  )}
                 </div>
 
                 {/* Phone Number */}
@@ -169,23 +178,23 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="text"
-                    name="phoneNum"
+                    name="phone_number"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.phoneNum}
+                    value={values.phone_number}
                   />
                 </div>
 
-                {/* Street */}
+                {/* Address */}
                 <div>
-                  <label>Street</label>
+                  <label>Address</label>
                   <input
                     className="login_inputs"
                     type="text"
-                    name="street"
+                    name="address"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.street}
+                    value={values.address}
                   />
                 </div>
 
@@ -208,10 +217,10 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="text"
-                    name="postalCode"
+                    name="postal_code"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.postalCode}
+                    value={values.postal_code}
                   />
                 </div>
 
@@ -234,14 +243,11 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="date"
-                    name="dateOfBirth"
+                    name="date_of_birth"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.dateOfBirth}
+                    value={values.date_of_birth}
                   />
-                  {errors.dateOfBirth && touched.dateOfBirth && (
-                    <div style={{ color: "red" }}>{errors.dateOfBirth}</div>
-                  )}
                 </div>
 
                 {/* Profile Picture */}
@@ -250,24 +256,29 @@ const SignUp = () => {
                   <input
                     className="login_inputs"
                     type="text"
-                    name="profilePicture"
+                    name="profile_picture_url"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.profilePicture}
+                    value={values.profile_picture_url}
+                  />
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label>Bio</label>
+                  <textarea
+                    className="login_inputs"
+                    name="bio"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.bio}
                   />
                 </div>
 
                 {/* Submit Button */}
-
                 <div className="btn">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    onClick={() => {
-                      navigate("/");
-                    }}
-                  >
-                    Log In
+                  <button type="submit" disabled={isSubmitting}>
+                    Register
                   </button>
                 </div>
               </form>

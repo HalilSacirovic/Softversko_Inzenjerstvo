@@ -36,38 +36,81 @@ app.get("/users", (req, res) => {
     res.json(results);
   });
 });
-
-app.post("/user2", (req, res) => {
-  const { username, password, name, lastName, yearBirth } = req.body;
-
-  console.log("Podaci za unos:", {
+app.post("/signup", (req, res) => {
+  const {
+    first_name,
+    last_name,
     username,
     password,
-    name,
-    lastName,
-    yearBirth,
+    email,
+    city,
+    country,
+    date_of_birth,
+    address,
+    phone_number,
+    profile_picture_url,
+    bio,
+  } = req.body;
+
+  console.log("Podaci za unos:", {
+    first_name,
+    last_name,
+    username,
+    password,
+    email,
+    city,
+    country,
+    address,
+    phone_number,
+    profile_picture_url,
+    bio,
   });
 
-  const query =
-    "INSERT INTO user2 (username, password, name, lastName, yearBirth) VALUES (?, ?, ?, ?, ?)";
+  // Generisanje hash-a lozinke pre nego što je pošaljemo u bazu
+  const bcrypt = require("bcrypt");
+  const saltRounds = 10;
 
-  db.query(
-    query,
-    [username, password, name, lastName, yearBirth],
-    (err, result) => {
-      if (err) {
-        console.error("SQL greška:", err.sqlMessage);
-        res
-          .status(500)
-          .json({ message: "Greška pri unosu korisnika", error: err });
-      } else {
-        res.status(201).json({
-          message: "Korisnik uspešno dodat",
-          userId: result.insertId,
-        });
-      }
+  bcrypt.hash(password, saltRounds, (err, hash) => {
+    if (err) {
+      console.error("Greška pri šifrovanju lozinke:", err);
+      res.status(500).json({ message: "Greška pri šifrovanju lozinke" });
+      return;
     }
-  );
+
+    const query =
+      "INSERT INTO ehub_user (first_name, last_name, username, password_hash, email, city, country, dateOfBirth, address, phone_number, profile_picture_url, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    db.query(
+      query,
+      [
+        first_name,
+        last_name,
+        username,
+        hash, // Koristi šifrovanu lozinku
+        email,
+        city,
+        country,
+        date_of_birth,
+        address,
+        phone_number,
+        profile_picture_url,
+        bio,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("SQL greška:", err.sqlMessage);
+          res
+            .status(500)
+            .json({ message: "Greška pri unosu korisnika", error: err });
+        } else {
+          res.status(201).json({
+            message: "Korisnik uspešno dodat",
+            userId: result.insertId,
+          });
+        }
+      }
+    );
+  });
 });
 
 const jwt = require("jsonwebtoken"); // Dodaj ovu liniju
