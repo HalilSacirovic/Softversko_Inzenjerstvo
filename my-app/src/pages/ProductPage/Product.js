@@ -22,10 +22,29 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import ReviewList from "../../components/Review";
 import AddReview from "../../components/AddReview";
+import { jwtDecode } from "jwt-decode";
 
 const Product = () => {
   const params = useParams();
   console.log(params);
+
+  const getUserFromToken = (token) => {
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode(token); // Dekodira payload iz JWT
+      return decoded; // Vraća korisničke podatke (npr. `id`, `username`)
+    } catch (error) {
+      console.error("Neuspešno dekodiranje tokena:", error);
+      return null;
+    }
+  };
+
+  // Primer upotrebe:
+  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const user = getUserFromToken(token);
+
+  console.log("Prijavljeni korisnik:", user);
 
   const [data, setData] = React.useState({});
   React.useEffect(() => {
@@ -150,11 +169,15 @@ const Product = () => {
                 subname={<Specifications data={data} />}
                 width="500"
               />
-              <NestedList name="Reviews" subname={<ReviewList />} width="500" />
+              <NestedList
+                name="Reviews"
+                subname={<ReviewList productId={params.id} />}
+                width="500"
+              />
               <NestedList
                 name="Add Review"
                 subname={
-                  <AddReview productId={params.id} userId={data.user_id} />
+                  <AddReview productId={params.id} userId={user.userId} />
                 }
                 width="500"
               />

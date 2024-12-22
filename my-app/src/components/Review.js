@@ -4,24 +4,33 @@ import { Box, Typography, Rating, Paper } from "@mui/material";
 const ReviewList = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
 
+  const productIds = Number(productId);
+
+  console.log("PRODUCT ID", productIds);
+
   // Dohvatanje recenzija za proizvod
   useEffect(() => {
-    fetch(`http://localhost:5000/reviews/${productId}`)
+    fetch(`http://localhost:5000/review/${productIds}`)
       .then((response) => response.json())
       .then((data) => {
-        setReviews(data);
+        if (Array.isArray(data)) {
+          setReviews(data); // Ako je data niz, postavi ga u state
+        } else {
+          setReviews([]); // Ako nije niz, postavi prazan niz
+        }
+        console.log("dataaaaa", data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
-  }, [productId]);
+  }, [productIds]); // Dodao sam productIds kao dependency
 
   return (
     <Box>
       <Typography variant="h6">Recenzije korisnika</Typography>
       {reviews.length === 0 ? (
         <Typography variant="body1">
-          Nema recenzija za ovog korisnika.
+          Nema recenzija za ovog proizvoda.
         </Typography>
       ) : (
         reviews.map((review) => (

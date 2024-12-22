@@ -465,3 +465,29 @@ app.post("/reviews_product", (req, res) => {
     });
   });
 });
+
+app.get("/review/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      pr.*, 
+      u.first_name AS user_name, 
+      u.last_name AS user_lastname, 
+      u.username 
+    FROM productreview pr
+    JOIN ehub_user u ON pr.user_id = u.id
+    WHERE pr.component_id = ?
+  `;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Greška prilikom izvršenja upita:", err.message);
+      return res.status(500).json({ error: "Interna greška servera" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Recenzija nije pronađena" });
+    }
+    res.json(result);
+  });
+});
