@@ -18,7 +18,7 @@ import { CategoriesNav } from "../../components/CateregoriesNav";
 import { purple } from "@mui/material/colors";
 import Specifications from "../../components/Specifications";
 import NestedList from "../../components/NestedList";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import ReviewList from "../../components/Review";
 import AddReview from "../../components/AddReview";

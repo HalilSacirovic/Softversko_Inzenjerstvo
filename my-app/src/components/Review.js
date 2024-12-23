@@ -4,6 +4,18 @@ import { Box, Typography, Rating, Paper } from "@mui/material";
 const ReviewList = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
 
+  const CountReview = () => {
+    let total = 0;
+    let counter = 0;
+
+    reviews.forEach((element, index) => {
+      counter++;
+      total += Number(element.rating);
+    });
+
+    return total / counter;
+  };
+
   const productIds = Number(productId);
 
   console.log("PRODUCT ID", productIds);
@@ -14,11 +26,12 @@ const ReviewList = ({ productId }) => {
       .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setReviews(data); // Ako je data niz, postavi ga u state
+          setReviews(data);
+          // Ako je data niz, postavi ga u state
         } else {
           setReviews([]); // Ako nije niz, postavi prazan niz
         }
-        console.log("dataaaaa", data);
+        console.log("dataaaaafo review", data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);

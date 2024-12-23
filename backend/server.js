@@ -28,6 +28,22 @@ db.connect((err) => {
   }
 });
 
+app.get("/userprofile/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `SELECT * FROM ehub_user WHERE id = ?`;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
+    res.json(result[0]); // Vraća podatke o korisniku
+  });
+});
+
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM ehub_user", (err, results) => {
     if (err) {

@@ -13,7 +13,6 @@ export const authSlice = createSlice({
   reducers: {
     setData(state, actions) {
       const data = actions.payload;
-      console.log("DATAAAAAAA 1111", data);
       state = data;
       return state;
     },
