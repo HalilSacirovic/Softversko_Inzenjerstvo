@@ -19,6 +19,7 @@ import {
   DialogTitle,
   Snackbar,
   Paper,
+  Rating,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,6 +34,7 @@ const ProfilePage = () => {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [profileData, setProfileData] = useState([]);
   const [productData, setProductData] = React.useState([]);
+  const [reviewData, setReviewData] = useState([]);
 
   const params = useParams();
 
@@ -62,32 +64,21 @@ const ProfilePage = () => {
     },
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: "Gaming Laptop",
-      price: "$1200",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 4,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-  ];
+  useEffect(() => {
+    fetch(`http://localhost:5000/review_user/${params.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setReviewData(data);
+          console.log("PODACI ZA REVIES", data);
+        } else {
+          setReviewData([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -117,7 +108,7 @@ const ProfilePage = () => {
       .catch((err) => {
         console.error("Error fetching profile:", err.message);
       });
-  }, []);
+  }, [params.id]);
 
   React.useEffect(() => {
     fetch("http://localhost:5000/user_products/" + params.id)
@@ -238,7 +229,7 @@ const ProfilePage = () => {
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Recenzije
           </Typography>
-          {reviews.map((review) => (
+          {reviewData.map((review) => (
             <Card
               key={review.id}
               sx={{
@@ -250,14 +241,20 @@ const ProfilePage = () => {
             >
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                 <Avatar
-                  src={review.user.avatar}
+                  src={"trenutno nema"}
                   sx={{ width: 40, height: 40, mr: 2 }}
                 />
                 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  {review.user.name}
+                  {review.user_name}
                 </Typography>
+                <Rating
+                  value={review.rating}
+                  readOnly
+                  precision={0.5}
+                  sx={{ ml: 2 }}
+                />
               </Box>
-              <Typography>{review.user.text}</Typography>
+              <Typography>{review.comment}</Typography>
             </Card>
           ))}
         </Box>

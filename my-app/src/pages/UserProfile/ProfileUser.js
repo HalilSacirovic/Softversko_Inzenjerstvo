@@ -29,7 +29,6 @@ import NavBar from "../../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 
 const ProfileUser = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [profileData, setProfileData] = useState([]);
@@ -95,13 +94,6 @@ const ProfileUser = () => {
       });
   }, [params.id]);
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-    if (isEditing) {
-      setShowSnackbar(true);
-    }
-  };
-
   const handleReviewSubmit = () => {
     fetch("http://localhost:5000/reviews_user", {
       method: "POST",
@@ -119,15 +111,6 @@ const ProfileUser = () => {
       .catch((error) => {
         console.error("Greška:", error);
       });
-  };
-
-  const handleDeleteWarning = () => {
-    setShowDeleteWarning(!showDeleteWarning);
-  };
-
-  const handleDeleteProfile = () => {
-    setShowDeleteWarning(false);
-    alert("Profil bi bio obrisan (mock funkcija).");
   };
 
   return (
@@ -158,39 +141,13 @@ const ProfileUser = () => {
             src="https://via.placeholder.com/150"
           />
           <Box>
-            {isEditing ? (
-              <>
-                <TextField
-                  label="Ime"
-                  value={profileData.username}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, username: e.target.value })
-                  }
-                  sx={{ mb: 1, width: "300px" }}
-                />
-                <TextField
-                  label="Email"
-                  value={profileData.email}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, email: e.target.value })
-                  }
-                  sx={{ mb: 1, width: "300px" }}
-                />
-              </>
-            ) : (
-              <>
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                  {profileData.username}
-                </Typography>
-                <Typography color="textSecondary">
-                  {profileData.email}
-                </Typography>
-              </>
-            )}
+            <>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                {profileData.username}
+              </Typography>
+              <Typography color="textSecondary">{profileData.email}</Typography>
+            </>
           </Box>
-          <IconButton onClick={handleEditToggle} sx={{ marginLeft: "auto" }}>
-            <EditIcon />
-          </IconButton>
         </Box>
 
         {/* Recenzije */}
@@ -305,41 +262,6 @@ const ProfileUser = () => {
         </Box>
 
         <Divider sx={{ my: 3 }} />
-
-        {/* Brisanje profila */}
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<DeleteIcon />}
-          onClick={handleDeleteWarning}
-          fullWidth
-          sx={{ padding: "10px", fontSize: "16px", fontWeight: 600 }}
-        >
-          Obriši profil
-        </Button>
-
-        {/* Upozorenje za brisanje */}
-        <Dialog
-          open={showDeleteWarning}
-          onClose={handleDeleteWarning}
-          aria-labelledby="delete-warning-title"
-        >
-          <DialogTitle id="delete-warning-title">Obriši profil</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Da li ste sigurni da želite obrisati svoj profil? Ova radnja je
-              nepovratna.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDeleteWarning} color="primary">
-              Otkaži
-            </Button>
-            <Button onClick={handleDeleteProfile} color="error">
-              Obriši
-            </Button>
-          </DialogActions>
-        </Dialog>
 
         {/* Snackbar za potvrdu editovanja */}
         <Snackbar

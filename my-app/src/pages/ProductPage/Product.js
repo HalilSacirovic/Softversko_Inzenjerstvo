@@ -19,7 +19,7 @@ import { purple } from "@mui/material/colors";
 import Specifications from "../../components/Specifications";
 import NestedList from "../../components/NestedList";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReviewList from "../../components/Review";
 import AddReview from "../../components/AddReview";
 import { jwtDecode } from "jwt-decode";
@@ -28,6 +28,7 @@ const Product = () => {
   const params = useParams();
   console.log(params);
 
+  const navigate = useNavigate();
   const getUserFromToken = (token) => {
     if (!token) return null;
 
@@ -160,6 +161,14 @@ const Product = () => {
                 >
                   <strong>Phone:</strong> {data.user_phone || "N/A"}
                 </Typography>
+                <Button
+                  sx={{ backgroundColor: "#bdbdbd", color: "black" }}
+                  onClick={() => {
+                    navigate(`/user_profile/${data.user_id}`);
+                  }}
+                >
+                  Details
+                </Button>
               </Box>
             </Box>
 
