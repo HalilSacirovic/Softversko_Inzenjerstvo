@@ -19,81 +19,106 @@ import {
   DialogTitle,
   Snackbar,
   Paper,
+  Rating,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { jwtDecode } from "jwt-decode";
 import { Link, useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
+import { jwtDecode } from "jwt-decode";
 
-const ProfilePage = () => {
+const ProfileUser = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [profileData, setProfileData] = useState([]);
-  const [productData, setProductData] = React.useState([]);
+  const [productData, setProductData] = useState([]);
+  const [rating, setRating] = useState(5); // Početna ocena
+  const [comment, setComment] = useState("");
+  const [reviewsData, setReviewData] = useState([]);
 
   const params = useParams();
 
-  const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 234 567 890",
-    bio: "Ljubitelj tehnologije i online prodaje.",
-  });
+  const getUserFromToken = (token) => {
+    if (!token) return null;
+    try {
+      const decoded = jwtDecode(token); // Dekodira payload iz JWT
+      return decoded; // Vraća korisničke podatke (npr. `id`, `username`)
+    } catch (error) {
+      console.error("Neuspešno dekodiranje tokena:", error);
+      return null;
+    }
+  };
+  // Primer upotrebe:
+  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const user = getUserFromToken(token);
 
-  const reviews = [
-    {
-      id: 1,
-      user: {
-        name: "Ana Marković",
-        avatar: "https://via.placeholder.com/150",
-        text: "Odličan korisnik! Preporuka!",
-      },
-    },
-    {
-      id: 2,
-      user: {
-        name: "Nikola Petrović",
-        avatar: "https://via.placeholder.com/150",
-        text: "Brza i laka saradnja, sve pohvale!",
-      },
-    },
-  ];
+  const reviewData = {
+    reviewer_id: user.userId,
+    reviewed_id: params.id,
+    rating: rating,
+    comment: comment,
+  };
 
-  const products = [
-    {
-      id: 1,
-      name: "Gaming Laptop",
-      price: "$1200",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 4,
-      name: "Graphics Card",
-      price: "$600",
-      image: "https://via.placeholder.com/300",
-    },
-  ];
+  useEffect(() => {
+    fetch(`http://localhost:5000/userprofile/${params.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setProfileData(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err.message);
+      });
+
+    fetch(`http://localhost:5000/user_products/${params.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setProductData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+
+    fetch(`http://localhost:5000/review_user/${params.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setReviewData(data);
+          console.log("PODACI ZA REVIES", data);
+        } else {
+          setReviewData([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, [params.id]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (isEditing) {
       setShowSnackbar(true);
     }
+  };
+
+  const handleReviewSubmit = () => {
+    fetch("http://localhost:5000/reviews_user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert("Recenzija je uspešno postavljena!");
+        setRating(5);
+        setComment("");
+      })
+      .catch((error) => {
+        console.error("Greška:", error);
+      });
   };
 
   const handleDeleteWarning = () => {
@@ -104,32 +129,6 @@ const ProfilePage = () => {
     setShowDeleteWarning(false);
     alert("Profil bi bio obrisan (mock funkcija).");
   };
-
-  useEffect(() => {
-    fetch(`http://localhost:5000/userprofile/${params.id}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setProfileData(data);
-        console.log("PROFILE DATA", data);
-      })
-      .catch((err) => {
-        console.error("Error fetching profile:", err.message);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    fetch("http://localhost:5000/user_products/" + params.id)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Dohvaćeni produkti:", data);
-        setProductData(data);
-      })
-      .catch((error) => {
-        console.error("Došlo je do greške:", error);
-      });
-  }, []);
 
   return (
     <>
@@ -163,25 +162,17 @@ const ProfilePage = () => {
               <>
                 <TextField
                   label="Ime"
-                  value={userData.name}
+                  value={profileData.username}
                   onChange={(e) =>
-                    setUserData({ ...userData, name: e.target.value })
+                    setProfileData({ ...profileData, username: e.target.value })
                   }
                   sx={{ mb: 1, width: "300px" }}
                 />
                 <TextField
                   label="Email"
-                  value={userData.email}
+                  value={profileData.email}
                   onChange={(e) =>
-                    setUserData({ ...userData, email: e.target.value })
-                  }
-                  sx={{ mb: 1, width: "300px" }}
-                />
-                <TextField
-                  label="Telefon"
-                  value={userData.phone}
-                  onChange={(e) =>
-                    setUserData({ ...userData, phone: e.target.value })
+                    setProfileData({ ...profileData, email: e.target.value })
                   }
                   sx={{ mb: 1, width: "300px" }}
                 />
@@ -194,9 +185,6 @@ const ProfilePage = () => {
                 <Typography color="textSecondary">
                   {profileData.email}
                 </Typography>
-                <Typography color="textSecondary">
-                  {profileData.phone_number}
-                </Typography>
               </>
             )}
           </Box>
@@ -205,61 +193,74 @@ const ProfilePage = () => {
           </IconButton>
         </Box>
 
-        {/* Bio */}
-        <Box
-          sx={{
-            mb: 3,
-            padding: "20px",
-            borderRadius: "8px",
-            backgroundColor: "#fff",
-            boxShadow: 2,
-          }}
-        >
-          <Typography variant="h6">O meni</Typography>
-          {isEditing ? (
-            <TextField
-              multiline
-              rows={3}
-              value={userData.bio}
-              onChange={(e) =>
-                setUserData({ ...userData, bio: e.target.value })
-              }
-              fullWidth
-            />
-          ) : (
-            <Typography>{profileData.bio}</Typography>
-          )}
-        </Box>
-
-        <Divider sx={{ my: 3 }} />
-
         {/* Recenzije */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Recenzije
           </Typography>
-          {reviews.map((review) => (
-            <Card
-              key={review.id}
-              sx={{
-                mb: 2,
-                padding: "10px",
-                boxShadow: 1,
-                backgroundColor: "#fff",
-              }}
+          {reviewsData.length < 1 ? (
+            <Typography variant="body1" sx={{ color: "textSecondary", mt: 2 }}>
+              Nema recenzija za ovog korisnika.
+            </Typography>
+          ) : (
+            reviewsData.map((review) => (
+              <Card
+                key={review.id}
+                sx={{
+                  mb: 2,
+                  padding: "10px",
+                  boxShadow: 1,
+                  backgroundColor: "#fff",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Avatar
+                    src={review.avatar}
+                    sx={{ width: 40, height: 40, mr: 2 }}
+                  />
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {`${review.user_name} ${review.user_lastname}`}
+                  </Typography>
+                  <Rating
+                    value={review.rating}
+                    readOnly
+                    precision={0.5}
+                    sx={{ ml: 2 }}
+                  />
+                </Box>
+                <Typography>{review.comment}</Typography>
+              </Card>
+            ))
+          )}
+
+          {/* Forma za dodavanje recenzije */}
+          <Card sx={{ padding: "10px", boxShadow: 1, backgroundColor: "#fff" }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Dodaj recenziju
+            </Typography>
+            <Rating
+              value={rating}
+              onChange={(e, newValue) => setRating(newValue)}
+              precision={0.5}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              multiline
+              rows={3}
+              placeholder="Dodajte komentar"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleReviewSubmit}
+              disabled={!rating || !comment}
             >
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Avatar
-                  src={review.user.avatar}
-                  sx={{ width: 40, height: 40, mr: 2 }}
-                />
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  {review.user.name}
-                </Typography>
-              </Box>
-              <Typography>{review.user.text}</Typography>
-            </Card>
-          ))}
+              Pošalji recenziju
+            </Button>
+          </Card>
         </Box>
 
         <Divider sx={{ my: 3 }} />
@@ -288,7 +289,6 @@ const ProfilePage = () => {
                   </CardContent>
                   <CardActions>
                     <Link to={`/product/${product.product_id}`}>
-                      {" "}
                       <Button
                         size="small"
                         startIcon={<ShoppingCartIcon />}
@@ -353,4 +353,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfileUser;

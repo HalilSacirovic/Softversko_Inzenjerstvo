@@ -28,6 +28,8 @@ db.connect((err) => {
   }
 });
 
+// ZA USERA
+
 app.get("/userprofile/:id", (req, res) => {
   const { id } = req.params;
 
@@ -198,7 +200,6 @@ app.post("/login", (req, res) => {
   });
 });
 
-////////////////////////////////////////////////////////////////////////
 app.patch("/user/:id", (req, res) => {
   const { id } = req.params;
   const {
@@ -278,9 +279,13 @@ app.delete("/user/:id", (req, res) => {
   });
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 app.post("/add-product", (req, res) => {
-  const productData = req.body; // Podaci o proizvodu prosleđeni iz forme
-  const key = parseInt(req.query.key); // Ključ za odabir kategorije
+  const productData = req.body;
+  const key = parseInt(req.query.key);
 
   if (!key || key < 1 || key > 8) {
     return res.status(400).json({ error: "Invalid key provided" });
@@ -537,6 +542,89 @@ app.get("/review/:id", (req, res) => {
     FROM productreview pr
     JOIN ehub_user u ON pr.user_id = u.id
     WHERE pr.component_id = ?
+  `;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Greška prilikom izvršenja upita:", err.message);
+      return res.status(500).json({ error: "Interna greška servera" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Recenzija nije pronađena" });
+    }
+    res.json(result);
+  });
+});
+
+app.get("/user_products/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = ` SELECT 
+      p.id AS product_id, 
+      p.name AS product_name, 
+      p.price AS product_price
+    FROM ehub_user u
+    JOIN component p ON   u.id =p.posted_by
+    WHERE u.id = ?`;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Proizvod nije pronađen" });
+    }
+    res.json(result); // Vraća podatke o proizvodu
+  });
+});
+
+app.post("/reviews_user", (req, res) => {
+  const { reviewer_id, reviewed_id, rating, comment } = req.body;
+
+  // Proveravamo da li su svi podaci prisutni
+  if (!reviewer_id || !reviewed_id || !rating || rating < 1 || rating > 5) {
+    return res.status(400).json({
+      error: "Svi podaci su obavezni i ocena mora biti između 1 i 5.",
+    });
+  }
+
+  // Upit za unos recenzije u bazu podataka
+  const query = `
+    INSERT INTO userrating (reviewer_id, reviewed_id, rating, comment)
+    VALUES (?, ?, ?, ?)`;
+
+  // Izvršavanje upita
+  db.query(
+    query,
+    [reviewer_id, reviewed_id, rating, comment],
+    (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Došlo je do greške prilikom unosa recenzije." });
+      }
+
+      // Vraćanje uspešne odgovora
+      res.status(201).json({
+        message: "Recenzija uspešno postavljena!",
+        reviewId: result.insertId, // ID novo ubačene recenzije
+      });
+    }
+  );
+});
+
+app.get("/review_user/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      ur.*, 
+      u.first_name AS user_name, 
+      u.last_name AS user_lastname, 
+      u.username 
+    FROM userrating ur
+    JOIN ehub_user u ON u.id = ur.reviewer_id
+    WHERE ur.reviewed_id = ?
   `;
 
   db.query(query, [id], (err, result) => {

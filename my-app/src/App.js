@@ -15,6 +15,7 @@ import { jwtDecode } from "jwt-decode";
 import { store } from "./store/store";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import ProfilePage from "./pages/User/User";
+import ProfileUser from "./pages/UserProfile/ProfileUser";
 
 const NavigationRoutes = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const NavigationRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/user_profile/:id" element={<ProfileUser />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/users" element={<UserTable />} />
