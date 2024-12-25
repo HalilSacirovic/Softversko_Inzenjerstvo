@@ -164,7 +164,11 @@ const Product = () => {
                 <Button
                   sx={{ backgroundColor: "#bdbdbd", color: "black" }}
                   onClick={() => {
-                    navigate(`/user_profile/${data.user_id}`);
+                    {
+                      user.userId === data.user_id
+                        ? navigate(`/profile/${user.userId}`)
+                        : navigate(`/user_profile/${data.user_id}`);
+                    }
                   }}
                 >
                   Details

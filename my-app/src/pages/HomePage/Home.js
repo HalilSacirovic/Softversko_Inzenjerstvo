@@ -1,23 +1,20 @@
+import React from "react";
 import "./Home.css";
-import * as React from "react";
 import ProductCard from "../../components/ProductCard";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
 import NestedList from "../../components/NestedList";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, Slider, ToggleButton, Typography } from "@mui/material";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import { useNavigate } from "react-router-dom";
+import { Box, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
 import RangeSlider from "../../components/Slider";
 
 const HomePage = () => {
-  // const location = useLocation();
-
   const [product, setProduct] = React.useState([]);
   const [filteredProducts, setFilteredProducts] = React.useState([]);
   const [filter, setFilter] = React.useState("all");
+  const [sortCriteria, setSortCriteria] = React.useState(""); // State za sortiranje
 
   React.useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -30,26 +27,48 @@ const HomePage = () => {
         console.error("Došlo je do greške:", error);
       });
   }, []);
-  const navigate = useNavigate();
+
   const handleFilter = (category) => {
-    setFilter(category); // Postavi trenutni filter
+    setFilter(category);
 
     if (category === "all") {
-      setFilteredProducts(product); // Prikazi sve proizvode
+      setFilteredProducts(product);
     } else {
       const filtered = product.filter((item) => {
         return item[category];
       });
-
       setFilteredProducts(filtered);
     }
   };
 
-  // const user = {
-  //   id: 1,
-  //   username: "halil",
-  // };
-  // OVO JE PRIMER ZBOG PARAMSA, UZEO SAM USER ALI ZA PRODUKT TREBA, ZNACI UZIMA SE ID PRODUKTA I SALJE SE NA TU STRANICU I POSLE IZ BAZE SE FECHUJU PODACI I UZIMA SE TAJ ID IZ PARAMSA KAKO BI DOBIO TAJ PRODUKT KOJ IMI TREBA
+  const handleSortChange = (event) => {
+    const criteria = event.target.value;
+    setSortCriteria(criteria);
+
+    let sortedProducts = [...filteredProducts];
+
+    switch (criteria) {
+      case "priceAsc":
+        sortedProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "priceDesc":
+        sortedProducts.sort((a, b) => b.price - a.price);
+        break;
+      case "nameAsc":
+        sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "nameDesc":
+        sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "rating":
+        sortedProducts.sort((a, b) => b.rating - a.rating); // Pretpostavljamo da `rating` postoji
+        break;
+      default:
+        break;
+    }
+
+    setFilteredProducts(sortedProducts);
+  };
 
   return (
     <div className="all-div">
@@ -69,6 +88,25 @@ const HomePage = () => {
             <button onClick={() => handleFilter("isRAM")}>RAM</button>
             <button onClick={() => handleFilter("isStorage")}>Storage</button>
           </div>
+
+          {/* Dropdown za sortiranje */}
+          <Box sx={{ my: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel id="sort-label">Sortiraj po</InputLabel>
+              <Select
+                labelId="sort-label"
+                id="sort-select"
+                value={sortCriteria}
+                onChange={handleSortChange}
+              >
+                <MenuItem value="priceAsc">Cena (rastuće)</MenuItem>
+                <MenuItem value="priceDesc">Cena (opadajuće)</MenuItem>
+                <MenuItem value="nameAsc">Ime (A-Z)</MenuItem>
+                <MenuItem value="nameDesc">Ime (Z-A)</MenuItem>
+                <MenuItem value="rating">Ocena</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
           <Box sx={{ display: "flex" }}>
             <div className="filters">

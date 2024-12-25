@@ -24,7 +24,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 
@@ -36,6 +36,7 @@ const ProfileUser = () => {
   const [rating, setRating] = useState(5); // Početna ocena
   const [comment, setComment] = useState("");
   const [reviewsData, setReviewData] = useState([]);
+  const [hasReviewed, setHasReviewed] = useState(false);
 
   const params = useParams();
 
@@ -49,6 +50,8 @@ const ProfileUser = () => {
       return null;
     }
   };
+
+  const navigate = useNavigate();
   // Primer upotrebe:
   const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
   const user = getUserFromToken(token);
@@ -61,6 +64,9 @@ const ProfileUser = () => {
   };
 
   useEffect(() => {
+    if (params.id && user.userId && String(params.id) === String(user.userId)) {
+      navigate(`/profile/${user.userId}`);
+    }
     fetch(`http://localhost:5000/userprofile/${params.id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -85,6 +91,11 @@ const ProfileUser = () => {
         if (Array.isArray(data)) {
           setReviewData(data);
           console.log("PODACI ZA REVIES", data);
+          const alreadyReviewed = data.some(
+            (review) => review.reviewer_id === user.userId
+          );
+          console.log(alreadyReviewed, "alreadyreviews");
+          setHasReviewed(alreadyReviewed);
         } else {
           setReviewData([]);
         }
@@ -94,6 +105,11 @@ const ProfileUser = () => {
       });
   }, [params.id]);
 
+  const isReviewed = () => {
+    hasReviewed
+      ? alert("Vec ste dodali jednu recenziju za ovog korisnika")
+      : handleReviewSubmit();
+  };
   const handleReviewSubmit = () => {
     fetch("http://localhost:5000/reviews_user", {
       method: "POST",
@@ -212,7 +228,7 @@ const ProfileUser = () => {
             />
             <Button
               variant="contained"
-              onClick={handleReviewSubmit}
+              onClick={isReviewed}
               disabled={!rating || !comment}
             >
               Pošalji recenziju
