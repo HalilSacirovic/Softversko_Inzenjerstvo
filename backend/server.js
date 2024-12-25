@@ -84,7 +84,6 @@ app.post("/signup", (req, res) => {
     bio,
   });
 
-  // Generisanje hash-a lozinke pre nego što je pošaljemo u bazu
   const bcrypt = require("bcrypt");
   const saltRounds = 10;
 

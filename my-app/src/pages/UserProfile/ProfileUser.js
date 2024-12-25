@@ -244,36 +244,40 @@ const ProfileUser = () => {
             Moji proizvodi
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
-            {productData.map((product) => (
-              <Grid item xs={12} sm={6} key={product.id}>
-                <Card sx={{ boxShadow: 2, borderRadius: 2 }}>
-                  <img
-                    src={Laptop}
-                    alt={product.product_name}
-                    style={{ width: "100%", borderRadius: "8px 8px 0 0" }}
-                  />
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      {product.product_name}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      {product.product_price}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Link to={`/product/${product.product_id}`}>
-                      <Button
-                        size="small"
-                        startIcon={<ShoppingCartIcon />}
-                        variant="outlined"
-                      >
-                        Detalji
-                      </Button>
-                    </Link>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+            {productData && Object.keys(productData).length > 0 ? (
+              <Typography>User aint selling any product</Typography>
+            ) : (
+              productData.map((product) => (
+                <Grid item xs={12} sm={6} key={product.id}>
+                  <Card sx={{ boxShadow: 2, borderRadius: 2 }}>
+                    <img
+                      src={Laptop}
+                      alt={product.product_name}
+                      style={{ width: "100%", borderRadius: "8px 8px 0 0" }}
+                    />
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {product.product_name}
+                      </Typography>
+                      <Typography color="textSecondary">
+                        {product.product_price}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Link to={`/product/${product.product_id}`}>
+                        <Button
+                          size="small"
+                          startIcon={<ShoppingCartIcon />}
+                          variant="outlined"
+                        >
+                          Detalji
+                        </Button>
+                      </Link>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))
+            )}
           </Grid>
         </Box>
 
