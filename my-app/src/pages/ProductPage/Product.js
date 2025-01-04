@@ -15,10 +15,10 @@ import {
 import Grid from "@mui/material/Grid2";
 import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
-import { purple } from "@mui/material/colors";
+import { green, purple } from "@mui/material/colors";
 import Specifications from "../../components/Specifications";
 import NestedList from "../../components/NestedList";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReviewList from "../../components/Review";
 import AddReview from "../../components/AddReview";
@@ -27,6 +27,11 @@ import { jwtDecode } from "jwt-decode";
 const Product = () => {
   const params = useParams();
   console.log(params);
+
+  const [reviews, setReviews] = useState([]);
+  const [valueReview, setValueReview] = useState();
+  const [userRatingId, setUserRatingId] = useState();
+  const [userRating, setUserRating] = useState([]);
 
   const navigate = useNavigate();
   const getUserFromToken = (token) => {
@@ -48,18 +53,79 @@ const Product = () => {
   console.log("Prijavljeni korisnik:", user);
 
   const [data, setData] = React.useState({});
+
   React.useEffect(() => {
     fetch("http://localhost:5000/product/" + params.id)
       .then((response) => response.json())
       .then((data) => {
         console.log("Dohvaćeni produkti:", data);
         console.log("ID", data.user_id);
+        setUserRatingId(data.user_id);
         setData(data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
+
+    fetch(`http://localhost:5000/review/${params.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+          // Ako je data niz, postavi ga u state
+        } else {
+          setReviews([]); // Ako nije niz, postavi prazan niz
+        }
+        console.log("dataaaaafo review", data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
   }, []);
+
+  console.log("userati", userRatingId);
+  useEffect(() => {
+    fetch(`http://localhost:5000/review_user/${userRatingId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setUserRating(data);
+          // Ako je data niz, postavi ga u state
+        } else {
+          setUserRating([]); // Ako nije niz, postavi prazan niz
+        }
+        console.log("USERREVIES TYPE SHI", data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, [userRatingId]);
+
+  const CountReview = () => {
+    let total = 0;
+    let counter = 0;
+
+    reviews.forEach((element) => {
+      counter++;
+      total += Number(element.rating);
+    });
+
+    const value = counter > 0 ? total / counter : 0;
+    return Math.round(value * 10) / 10;
+  };
+
+  const CountReviewUser = () => {
+    let total = 0;
+    let counter = 0;
+
+    userRating.forEach((element) => {
+      counter++;
+      total += Number(element.rating);
+    });
+
+    const value = counter > 0 ? total / counter : 0;
+    return Math.round(value * 10) / 10;
+  };
 
   return (
     <Box>
@@ -84,8 +150,18 @@ const Product = () => {
               <Box>
                 <Typography variant="h5">{data.name}</Typography>
                 <Box>
-                  <Rating name="size-medium" defaultValue={5} />
-                  Review
+                  <Box sx={{ display: "flex" }}>
+                    <Rating
+                      name="read-only"
+                      value={CountReview()}
+                      readOnly
+                      precision={0.1}
+                    />
+                    <Typography paddingLeft={2} color="green">
+                      {CountReview()}
+                    </Typography>
+                  </Box>
+                  <Typography>Total Reviews: ({reviews.length})</Typography>
                 </Box>
               </Box>
               <Box sx={{ marginTop: 4 }}>
@@ -143,6 +219,17 @@ const Product = () => {
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                   {`${data.user_name} ${data.user_lastname}`}
                 </Typography>
+                <Box sx={{ display: "flex" }}>
+                  <Rating
+                    name="read-only"
+                    value={CountReviewUser()}
+                    readOnly
+                    precision={0.1}
+                  />
+                  <Typography paddingLeft={2} color="green">
+                    {CountReviewUser()}
+                  </Typography>
+                </Box>
                 <Typography
                   variant="body1"
                   sx={{ color: "#555", marginTop: 1 }}
@@ -160,6 +247,14 @@ const Product = () => {
                   sx={{ color: "#555", marginTop: 1 }}
                 >
                   <strong>Phone:</strong> {data.user_phone || "N/A"}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  sx={{ color: "#555", marginTop: 1 }}
+                >
+                  <strong>Total Reviews:</strong>
+                  {userRating.length}
                 </Typography>
                 <Button
                   sx={{ backgroundColor: "#bdbdbd", color: "black" }}

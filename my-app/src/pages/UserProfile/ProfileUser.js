@@ -244,7 +244,7 @@ const ProfileUser = () => {
             Moji proizvodi
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
-            {productData && Object.keys(productData).length > 0 ? (
+            {productData && Object.keys(productData).length === 0 ? (
               <Typography>User aint selling any product</Typography>
             ) : (
               productData.map((product) => (
