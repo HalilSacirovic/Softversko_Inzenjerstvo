@@ -1,17 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, TextField, Rating, Typography } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 
 const AddReview = ({ productId, userId }) => {
   const [rating, setRating] = useState(5); // Početna ocena
   const [comment, setComment] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [hasReviewed, setHasReviewed] = useState(false);
+
+  const getUserFromToken = (token) => {
+    if (!token) return null;
+    try {
+      const decoded = jwtDecode(token); // Dekodira payload iz JWT
+      return decoded; // Vraća korisničke podatke (npr. `id`, `username`)
+    } catch (error) {
+      console.error("Neuspešno dekodiranje tokena:", error);
+      return null;
+    }
+  };
+
+  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const user = getUserFromToken(token);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/review/${productId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+          const alreadyReviewed = data.some(
+            (review) => review.user_id === user.userId
+          );
+          console.log(alreadyReviewed, "alreadyreviews");
+          setHasReviewed(alreadyReviewed);
+          // Ako je data niz, postavi ga u state
+        } else {
+          setReviews([]); // Ako nije niz, postavi prazan niz
+        }
+        console.log("dataaaaafo review", data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
 
   const handleSubmit = async () => {
     if (!comment) {
       alert("Komentar je obavezan!");
       return;
     }
-
-    console.log("PRODUCT & USER ID ", Number(productId), userId);
 
     const reviewData = {
       component_id: Number(productId),
@@ -39,6 +76,12 @@ const AddReview = ({ productId, userId }) => {
       });
   };
 
+  const isReviewed = () => {
+    hasReviewed
+      ? alert("Vec ste dodali jednu recenziju za ovaj proizvod")
+      : handleSubmit();
+  };
+
   return (
     <Box>
       <Typography variant="h6">Dodajte svoju recenziju</Typography>
@@ -60,7 +103,7 @@ const AddReview = ({ productId, userId }) => {
         />
       </Box>
       <Box sx={{ marginTop: 2 }}>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button onClick={isReviewed} variant="contained" color="primary">
           Postavi recenziju
         </Button>
       </Box>
