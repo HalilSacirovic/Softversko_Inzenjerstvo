@@ -9,13 +9,48 @@ import laptop from "../assets/laptop.png";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { jwtDecode } from "jwt-decode";
 
 export default function ProductCard(props) {
   const navigate = useNavigate();
 
+  const getUserFromToken = (token) => {
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode(token); // Dekodira payload iz JWT
+      return decoded; // Vraća korisničke podatke (npr. `id`, `username`)
+    } catch (error) {
+      console.error("Neuspešno dekodiranje tokena:", error);
+      return null;
+    }
+  };
+
+  // Primer upotrebe:
+  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const user = getUserFromToken(token);
+
   const handleAddToCart = () => {
-    console.log(`${props.name} je dodato u korpu`);
-    // Dodaj funkcionalnost za dodavanje u korpu
+    const data = {
+      user_id: user.userId,
+      produkt_id: props.id,
+    };
+
+    fetch("http://localhost:5000/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("Recenzija je uspešno postavljena!");
+      })
+      .catch((error) => {
+        console.error("Greška:", error);
+      });
   };
 
   return (

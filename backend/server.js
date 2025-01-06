@@ -637,3 +637,27 @@ app.get("/review_user/:id", (req, res) => {
     res.json(result);
   });
 });
+
+app.post("/cart", (req, res) => {
+  const { user_id, produkt_id } = req.body;
+
+  // Upit za unos recenzije u bazu podataka
+  const query = `
+    INSERT INTO cart (user_id, produkt_id)
+    VALUES (?, ?)`;
+
+  // Izvršavanje upita
+  db.query(query, [user_id, produkt_id], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ error: "Došlo je do greške prilikom unosa u korpu" });
+    }
+
+    // Vraćanje uspešne odgovora
+    res.status(201).json({
+      message: "Recenzija uspešno postavljena!",
+      reviewId: result.insertId, // ID novo ubačene recenzije
+    });
+  });
+});

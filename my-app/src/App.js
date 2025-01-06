@@ -16,6 +16,7 @@ import { store } from "./store/store";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import ProfilePage from "./pages/User/User";
 import ProfileUser from "./pages/UserProfile/ProfileUser";
+import CartPage from "./pages/Cart/Cart";
 
 const NavigationRoutes = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const NavigationRoutes = () => {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/users" element={<UserTable />} />
         <Route path="/admin/products" element={<ProductList />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route
           path="/addproduct"
           element={

@@ -54,6 +54,29 @@ const Product = () => {
 
   const [data, setData] = React.useState({});
 
+  const handleAddToCart = () => {
+    const data = {
+      user_id: user.userId,
+      produkt_id: params.id,
+    };
+
+    fetch("http://localhost:5000/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("Recenzija je uspešno postavljena!");
+      })
+      .catch((error) => {
+        console.error("Greška:", error);
+      });
+  };
+
   React.useEffect(() => {
     fetch("http://localhost:5000/product/" + params.id)
       .then((response) => response.json())
@@ -175,6 +198,7 @@ const Product = () => {
                     color: "black",
                     borderRadius: 4,
                   }}
+                  onClick={handleAddToCart}
                 >
                   ADD TO CART
                 </Button>
