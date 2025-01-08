@@ -661,3 +661,30 @@ app.post("/cart", (req, res) => {
     });
   });
 });
+
+app.get("/cart/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      cart.*,
+      c.name AS c_name, 
+      c.price AS c_price, 
+      c.manufacturer as c_manufacturer,
+      c.description as c_details
+    FROM cart cart
+    JOIN component c ON cart.produkt_id = c.id 
+    WHERE cart.user_id = ?
+  `;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Greška prilikom izvršenja upita:", err.message);
+      return res.status(500).json({ error: "Interna greška servera" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Recenzija nije pronađena" });
+    }
+    res.json(result);
+  });
+});

@@ -91,6 +91,13 @@ const NavBar = () => {
                   </li>
                   <li
                     onClick={() => {
+                      navigate("/cart");
+                    }}
+                  >
+                    Cart
+                  </li>
+                  <li
+                    onClick={() => {
                       localStorage.removeItem("auth_token"); // Brisanje tokena
                       setIsLoggedIn(false); // Ažuriraj stanje
                       navigate("/login");

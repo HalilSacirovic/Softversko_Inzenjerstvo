@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,8 +10,25 @@ import {
   Container,
 } from "@mui/material";
 import NavBar from "../../components/NavBar";
+import { jwtDecode } from "jwt-decode";
 
 const CartPage = () => {
+  const [cartData, setCartData] = useState([]);
+  const [value, setValue] = useState(1);
+
+  const getUserFromToken = (token) => {
+    if (!token) return null;
+    try {
+      const decoded = jwtDecode(token);
+      return decoded;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const user = getUserFromToken(token);
+
   const items = [
     {
       name: "Laptop LENOVO Legion 5",
@@ -53,6 +70,22 @@ const CartPage = () => {
     },
   ];
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/cart/${user.userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCartData(data);
+        } else {
+          setCartData([]);
+        }
+        console.log("dataaaaafo review", data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
+
   return (
     <>
       <NavBar />
@@ -63,31 +96,43 @@ const CartPage = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8}>
-              {items.map((item, index) => (
+              {cartData.map((item, index) => (
                 <Paper key={index} sx={{ p: 2, mb: 2 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={9}>
-                      <Typography variant="h6">{item.name}</Typography>
-                      <Typography variant="subtitle1" color="text.secondary">
-                        {item.description}
-                      </Typography>
+                      <Typography variant="h6">{item.c_name}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {item.details}
+                        {item.c_manufacturer}
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary">
+                        {item.c_details}
                       </Typography>
                     </Grid>
                     <Grid item xs={3} textAlign="right">
-                      <Typography variant="h6">{item.price}</Typography>
+                      <Typography variant="h6">{item.c_price}</Typography>
                       <Box
                         display="flex"
                         justifyContent="flex-end"
                         alignItems="center"
                         mt={1}
                       >
-                        <Button variant="outlined" size="small">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => {
+                            setValue(value - 1);
+                          }}
+                        >
                           -
                         </Button>
-                        <Typography sx={{ mx: 1 }}>1</Typography>
-                        <Button variant="outlined" size="small">
+                        <Typography sx={{ mx: 1 }}>{value}</Typography>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => {
+                            setValue(value + 1);
+                          }}
+                        >
                           +
                         </Button>
                       </Box>
