@@ -13,8 +13,11 @@ import NavBar from "../../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 
 const CartPage = () => {
+  const [promoCode, setPromoCode] = useState("");
+  const [isDiscount, setIsDiscount] = useState(0);
   const [cartData, setCartData] = useState([]);
-  const [value, setValue] = useState(1);
+  const [values, setValues] = useState({});
+  const [discount, setDiscount] = useState(0);
 
   const getUserFromToken = (token) => {
     if (!token) return null;
@@ -26,49 +29,8 @@ const CartPage = () => {
     }
   };
 
-  const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
+  const token = localStorage.getItem("auth_token");
   const user = getUserFromToken(token);
-
-  const items = [
-    {
-      name: "Laptop LENOVO Legion 5",
-      description: "15ARH7H R7/16/1/3070",
-      details: 'AMD Ryzen 7 6800H do 4.70 GHz, 15.6", GeForce RTX 3070, 16GB',
-      price: "204,439.00 RSD",
-    },
-    {
-      name: "Grafička karta BIOSTAR RX560",
-      description: "4GB GDDR5 128bit",
-      details: "Grafička AMD Radeon RX 560, 4GB, 128bit",
-      price: "15,999.00 RSD",
-    },
-    {
-      name: "Laptop LENOVO IdeaPad Gaming 3",
-      description: "15ACH6 R5/16/512",
-      details: 'AMD Ryzen 5 5500H do 4.20 GHz, 15.6", GeForce RTX 2050, 16GB',
-      price: "77,999.00 RSD",
-    },
-    {
-      name: "Laptop LENOVO IdeaPad 1",
-      description: "15ALC7 R5/8/512",
-      details:
-        'AMD Lucienne Ryzen 5 5500U do 4.0GHz, 15.6", Integrisana AMD Radeon, 8GB',
-      price: "44,499.00 RSD",
-    },
-    {
-      name: "Laptop ASUS Vivobook S 15 OLED",
-      description: "S5507QA-MA067W",
-      details:
-        'Snapdragon X Plus/16GB/1TB, 15.6", Integrisana Qualcomm Adreno X Graphics, 16GB',
-      price: "143,109.00 RSD",
-    },
-    {
-      name: "Laptop ASUS ProArt Z213 OLED",
-      description: "Snapdragon X Plus/16/1TB",
-      details: "Integrisana Qualcomm Adreno Graphics, 16GB",
-      price: "195,549.00 RSD",
-    },
-  ];
 
   useEffect(() => {
     fetch(`http://localhost:5000/cart/${user.userId}`)
@@ -76,15 +38,64 @@ const CartPage = () => {
       .then((data) => {
         if (Array.isArray(data)) {
           setCartData(data);
-        } else {
-          setCartData([]);
+
+          const initialValues = {};
+          data.forEach((item) => {
+            initialValues[item.id] = 1;
+          });
+          setValues(initialValues);
         }
-        console.log("dataaaaafo review", data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
-  }, []);
+  }, [user.userId]);
+
+  const handleIncrement = (id) => {
+    setValues((prevValues) => ({
+      ...prevValues,
+      [id]: prevValues[id] + 1,
+    }));
+  };
+
+  const handleDecrement = (id) => {
+    setValues((prevValues) => ({
+      ...prevValues,
+      [id]: Math.max(0, prevValues[id] - 1),
+    }));
+  };
+
+  const calculateTotalPrice = () => {
+    return cartData.reduce(
+      (sum, item) => sum + Number(item.c_price) * (values[item.id] || 0),
+      0
+    );
+  };
+
+  useEffect(() => {
+    if (isDiscount) {
+      const price = calculateTotalPrice();
+      const discountValue = price * 0.2;
+      setDiscount(discountValue);
+    } else {
+      setDiscount(0);
+    }
+  }, [isDiscount, cartData, values]);
+
+  const handleDiscount = () => {
+    if (promoCode === "halil20" && isDiscount === 0) {
+      setIsDiscount(1);
+    } else if (isDiscount === 1) {
+      alert("Već ste iskoristili ovaj kod");
+    } else {
+      alert("Pogrešan KOD");
+    }
+  };
+
+  const fullPrice = () => {
+    const totalPrice = calculateTotalPrice();
+    return isDiscount ? totalPrice - discount : totalPrice;
+  };
 
   return (
     <>
@@ -96,8 +107,8 @@ const CartPage = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8}>
-              {cartData.map((item, index) => (
-                <Paper key={index} sx={{ p: 2, mb: 2 }}>
+              {cartData.map((item) => (
+                <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={9}>
                       <Typography variant="h6">{item.c_name}</Typography>
@@ -119,19 +130,17 @@ const CartPage = () => {
                         <Button
                           variant="outlined"
                           size="small"
-                          onClick={() => {
-                            setValue(value - 1);
-                          }}
+                          onClick={() => handleDecrement(item.id)}
                         >
                           -
                         </Button>
-                        <Typography sx={{ mx: 1 }}>{value}</Typography>
+                        <Typography sx={{ mx: 1 }}>
+                          {values[item.id] || 0}
+                        </Typography>
                         <Button
                           variant="outlined"
                           size="small"
-                          onClick={() => {
-                            setValue(value + 1);
-                          }}
+                          onClick={() => handleIncrement(item.id)}
                         >
                           +
                         </Button>
@@ -151,22 +160,12 @@ const CartPage = () => {
                   Cena za online plaćanje:
                 </Typography>
                 <Typography variant="h5" sx={{ mb: 1 }}>
-                  682,094.00 RSD
+                  {fullPrice()} $
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Popust: 0.00 RSD
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mb: 2 }}
-                >
-                  Osvojeni bodovi: 500
+                  Discount: {discount.toFixed(2)} $
                 </Typography>
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  Iznos kupovine: 682,094.00 RSD
-                </Typography>
                 <Button
                   variant="contained"
                   fullWidth
@@ -180,8 +179,10 @@ const CartPage = () => {
                   placeholder="PROMO KOD"
                   size="small"
                   sx={{ mb: 1 }}
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
                 />
-                <Button variant="outlined" fullWidth>
+                <Button onClick={handleDiscount} variant="outlined" fullWidth>
                   Primeni kod
                 </Button>
               </Paper>
