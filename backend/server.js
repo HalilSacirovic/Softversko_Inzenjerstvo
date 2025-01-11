@@ -688,3 +688,23 @@ app.get("/cart/:id", (req, res) => {
     res.json(result);
   });
 });
+
+app.get("/incart", (req, res) => {
+  const query = `
+    SELECT 
+      *
+    FROM cart 
+    
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Greška prilikom izvršenja upita:", err.message);
+      return res.status(500).json({ error: "Interna greška servera" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Recenzija nije pronađena" });
+    }
+    res.json(result);
+  });
+});

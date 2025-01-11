@@ -13,6 +13,7 @@ import { jwtDecode } from "jwt-decode";
 
 export default function ProductCard(props) {
   const navigate = useNavigate();
+  const [isInCart, setIsInCart] = React.useState([]);
 
   const getUserFromToken = (token) => {
     if (!token) return null;
@@ -51,6 +52,21 @@ export default function ProductCard(props) {
       .catch((error) => {
         console.error("Greška:", error);
       });
+  };
+
+  React.useEffect(() => {
+    fetch(`http://localhost:5000/incart`)
+      .then((response) => response.json())
+      .then((data) => {
+        setIsInCart(data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
+  }, []);
+
+  const handleIsInCart = (productId) => {
+    return isInCart.some((item, idx) => item.produkt_id === productId);
   };
 
   return (
@@ -135,7 +151,11 @@ export default function ProductCard(props) {
               backgroundColor: "#e68900",
             },
           }}
-          onClick={handleAddToCart}
+          onClick={() => {
+            handleIsInCart(props.id)
+              ? alert("already  in cart")
+              : handleAddToCart();
+          }}
         >
           <ShoppingCartIcon sx={{ fontSize: 20, color: "#fff" }} />
         </Button>

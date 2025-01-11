@@ -32,6 +32,7 @@ const Product = () => {
   const [valueReview, setValueReview] = useState();
   const [userRatingId, setUserRatingId] = useState();
   const [userRating, setUserRating] = useState([]);
+  const [isInCart, setIsInCart] = React.useState([]);
 
   const navigate = useNavigate();
   const getUserFromToken = (token) => {
@@ -104,6 +105,16 @@ const Product = () => {
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
+
+    fetch(`http://localhost:5000/incart`)
+      .then((response) => response.json())
+      .then((data) => {
+        setIsInCart(data);
+        console.log("cartdata", data);
+      })
+      .catch((error) => {
+        console.error("Došlo je do greške:", error);
+      });
   }, []);
 
   console.log("userati", userRatingId);
@@ -148,6 +159,10 @@ const Product = () => {
 
     const value = counter > 0 ? total / counter : 0;
     return Math.round(value * 10) / 10;
+  };
+
+  const handleIsInCart = (productId) => {
+    return isInCart.some((item, idx) => item.produkt_id === productId);
   };
 
   return (
@@ -198,7 +213,11 @@ const Product = () => {
                     color: "black",
                     borderRadius: 4,
                   }}
-                  onClick={handleAddToCart}
+                  onClick={() => {
+                    handleIsInCart(Number(params.id))
+                      ? alert("already  in cart")
+                      : handleAddToCart();
+                  }}
                 >
                   ADD TO CART
                 </Button>
