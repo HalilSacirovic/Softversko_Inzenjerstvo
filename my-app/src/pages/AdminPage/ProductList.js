@@ -8,7 +8,10 @@ import {
   TableRow,
   Paper,
   Button,
+  Box,
+  TextField,
 } from "@mui/material";
+import NavBar from "../../components/NavBar";
 
 // Komponenta za prikazivanje Laptopa
 const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
@@ -514,14 +517,23 @@ const MotherboardTable = ({ motherboards, handleEdit, handleDelete }) => {
 };
 
 const ProductCatalog = () => {
-  // Svi proizvodi se čuvaju u stanju. Možete dodati nove proizvode putem funkcija.
-
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const handleSearch = (value) => {
+    const filtered = products.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredProducts(filtered); // Ažuriraj filtriranu listu
+  };
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
       .then((response) => response.json())
-      .then((data) => setProducts(data));
+      .then((data) => {
+        setProducts(data);
+        setFilteredProducts(data);
+      });
   }, []);
 
   const handleEdit = (product) => {
@@ -532,17 +544,43 @@ const ProductCatalog = () => {
     // Implementirajte funkcionalnost za brisanje proizvoda
   };
 
-  const laptops = products.filter((product) => product.isLaptop);
-  const desktops = products.filter((product) => product.isDesktop);
-  const cpus = products.filter((product) => product.isCPU);
-  const gpus = products.filter((product) => product.isGPU);
-  const psus = products.filter((product) => product.isPSU);
-  const rams = products.filter((product) => product.isRAM);
-  const motherboards = products.filter((product) => product.isMotherboard);
-  const storages = products.filter((product) => product.isStorage);
+  const laptops = filteredProducts.filter((product) => product.isLaptop);
+  const desktops = filteredProducts.filter((product) => product.isDesktop);
+  const cpus = filteredProducts.filter((product) => product.isCPU);
+  const gpus = filteredProducts.filter((product) => product.isGPU);
+  const psus = filteredProducts.filter((product) => product.isPSU);
+  const rams = filteredProducts.filter((product) => product.isRAM);
+  const motherboards = filteredProducts.filter(
+    (product) => product.isMotherboard
+  );
+  const storages = filteredProducts.filter((product) => product.isStorage);
 
   return (
     <div>
+      <NavBar />
+      <Box sx={{ padding: 2, display: "flex", justifyContent: "left" }}>
+        <TextField
+          variant="outlined"
+          placeholder="Search by the name"
+          fullWidth
+          sx={{
+            maxWidth: 600,
+            backgroundColor: "white",
+            border: "1px solid black",
+            outline: "none !important",
+            borderRadius: 3,
+            "& .MuiOutlinedInput-root": {
+              "&:hover fieldset": {
+                borderColor: "black", // Stil za hover
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "black", // Uklanja plavi outline pri fokusu
+              },
+            },
+          }}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+      </Box>
       <LaptopTable
         laptops={laptops}
         handleEdit={handleEdit}

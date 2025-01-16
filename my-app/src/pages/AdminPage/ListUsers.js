@@ -9,14 +9,23 @@ import {
   Paper,
   Button,
   Stack,
+  Box,
+  TextField,
 } from "@mui/material";
 import EditUserModal from "./EditUser";
-
+import NavBar from "../../components/NavBar";
 const UserTable = () => {
-  const [users, setUsers] = useState([]);
-
+  const [users, setUsers] = useState([]); // Originalni podaci
+  const [filteredUsers, setFilteredUsers] = useState([]); // Filtrirani podaci
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleSearch = (value) => {
+    const filtered = users.filter((item) =>
+      item.first_name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredUsers(filtered); // Ažuriraj filtriranu listu
+  };
 
   const handleOpen = (user) => {
     setSelectedUser(user);
@@ -38,9 +47,10 @@ const UserTable = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch("http://localhost:5000/users"); // Povuci korisnike iz API-ja
+      const response = await fetch("http://localhost:5000/users");
       const data = await response.json();
       setUsers(data);
+      setFilteredUsers(data);
     };
 
     fetchUsers();
@@ -53,14 +63,13 @@ const UserTable = () => {
 
     if (confirmDelete) {
       fetch(`http://localhost:5000/user/${id}`, {
-        method: "DELETE", // Ova linija označava da je zahtev za brisanje
+        method: "DELETE",
       })
         .then((response) => {
           if (response.ok) {
             alert(`Korisnik sa ID: ${id} je obrisan.`);
-            // Osveži listu korisnika (ako koristiš neki metod za učitavanje korisnika)
-            // Na primer, možeš ponovo pozvati funkciju koja vraća listu korisnika
-            window.location.reload();
+            setFilteredUsers((prev) => prev.filter((user) => user.id !== id));
+            setUsers((prev) => prev.filter((user) => user.id !== id));
           } else {
             alert("Greška prilikom brisanja korisnika.");
           }
@@ -74,8 +83,6 @@ const UserTable = () => {
 
   const handleSave = async () => {
     if (!selectedUser) return;
-    console.log(selectedUser, "SELECTED USER");
-
     try {
       const response = await fetch(
         `http://localhost:5000/user/${selectedUser.id}`,
@@ -92,10 +99,10 @@ const UserTable = () => {
         const updatedUsers = users.map((user) =>
           user.id === selectedUser.id ? selectedUser : user
         );
-        setUsers(updatedUsers); // Ažuriraj listu korisnika u UI-u
+        setUsers(updatedUsers);
+        setFilteredUsers(updatedUsers);
         alert("Korisnik je uspešno ažuriran.");
       } else {
-        console.error("Failed to update user");
         alert("Greška prilikom ažuriranja korisnika.");
       }
     } catch (error) {
@@ -106,6 +113,16 @@ const UserTable = () => {
 
   return (
     <div>
+      <NavBar />
+      <Box sx={{ padding: 2, display: "flex", justifyContent: "left" }}>
+        <TextField
+          variant="outlined"
+          placeholder="Search by the name"
+          fullWidth
+          sx={{ maxWidth: 600 }}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -121,11 +138,11 @@ const UserTable = () => {
               <TableCell>Created At</TableCell>
               <TableCell>Admin</TableCell>
               <TableCell>Phone</TableCell>
-              <TableCell>Actions</TableCell> {/* Nova kolona za akcije */}
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.first_name}</TableCell>
@@ -141,7 +158,6 @@ const UserTable = () => {
                 <TableCell>{user.isAdmin ? "Yes" : "No"}</TableCell>
                 <TableCell>{user.phone_number}</TableCell>
                 <TableCell>
-                  {/* Dugmad za akcije */}
                   <Stack direction="row" spacing={1}>
                     <Button
                       variant="contained"
