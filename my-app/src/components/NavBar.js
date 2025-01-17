@@ -1,11 +1,13 @@
-import { Container } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Container, TextField } from "@mui/material";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [product, setProduct] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     // Provera da li postoji token
@@ -37,7 +39,16 @@ const NavBar = () => {
             <h1>E-HUB</h1>
           </div>
           <div className="search_bar">
-            <input placeholder="Search for product"></input>
+            <TextField
+              placeholder="Search for product"
+              sx={{ backgroundColor: "white", borderRadius: 3 }}
+              onKeyDown={(e) => {
+                console.log(e.target.value);
+                if (e.key === "Enter") {
+                  navigate(`/?keyword=${encodeURIComponent(e.target.value)}`);
+                }
+              }}
+            />
           </div>
           <div className="icons">
             <ul>

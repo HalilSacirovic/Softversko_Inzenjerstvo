@@ -4,7 +4,7 @@ import ProductCard from "../../components/ProductCard";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
 import NestedList from "../../components/NestedList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import NavBar from "../../components/NavBar";
 import { CategoriesNav } from "../../components/CateregoriesNav";
@@ -15,6 +15,10 @@ const HomePage = () => {
   const [filteredProducts, setFilteredProducts] = React.useState([]);
   const [filter, setFilter] = React.useState("all");
   const [sortCriteria, setSortCriteria] = React.useState(""); // State za sortiranje
+  const [searchedProducts, setSearchedProducts] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  const keywords = searchParams.get("keyword");
 
   React.useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -22,11 +26,28 @@ const HomePage = () => {
       .then((data) => {
         setProduct(data);
         setFilteredProducts(data);
+        setSearchedProducts(data);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
       });
   }, []);
+
+  React.useEffect(() => {
+    if (keywords) {
+      handleSearch(keywords);
+    } else {
+      setFilteredProducts(product);
+    }
+  }, [keywords, product]);
+
+  const handleSearch = (keywords) => {
+    const filtered = product.filter((item) =>
+      item.name.toLowerCase().includes(keywords.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+    console.log(filtered);
+  };
 
   const handleFilter = (category) => {
     setFilter(category);
