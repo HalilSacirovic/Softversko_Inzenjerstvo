@@ -10,6 +10,7 @@ import {
   Container,
 } from "@mui/material";
 import NavBar from "../../components/NavBar";
+import PaymentModal from "../../components/PaymentModal";
 import { jwtDecode } from "jwt-decode";
 
 const CartPage = () => {
@@ -18,6 +19,7 @@ const CartPage = () => {
   const [cartData, setCartData] = useState([]);
   const [values, setValues] = useState({});
   const [discount, setDiscount] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
 
   const getUserFromToken = (token) => {
     if (!token) return null;
@@ -120,7 +122,7 @@ const CartPage = () => {
                       </Typography>
                     </Grid>
                     <Grid item xs={3} textAlign="right">
-                      <Typography variant="h6">{item.c_price}</Typography>
+                      <Typography variant="h6">{item.c_price}$</Typography>
                       <Box
                         display="flex"
                         justifyContent="flex-end"
@@ -171,6 +173,7 @@ const CartPage = () => {
                   fullWidth
                   color="primary"
                   sx={{ mb: 2 }}
+                  onClick={() => setOpenModal(true)}
                 >
                   Nastavite
                 </Button>
@@ -188,6 +191,15 @@ const CartPage = () => {
               </Paper>
             </Grid>
           </Grid>
+
+          <PaymentModal
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+            onConfirm={() => {
+              alert("Narudžbina je uspešno poslata!");
+              setOpenModal(false);
+            }}
+          />
         </Box>
       </Container>
     </>
