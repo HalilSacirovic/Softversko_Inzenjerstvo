@@ -145,13 +145,48 @@ const AddProduct = () => {
         setIsValidParent={handleIsValidChange}
       />
     ),
-    2: <Desktop onSubmit={handleProductDetailsChange} />,
-    3: <Cpu onSubmit={handleProductDetailsChange} />,
-    4: <Gpu onSubmit={handleProductDetailsChange} />,
-    5: <Psu onSubmit={handleProductDetailsChange} />,
-    6: <MotherBoard onSubmit={handleProductDetailsChange} />,
-    7: <Ram onSubmit={handleProductDetailsChange} />,
-    8: <Storage onSubmit={handleProductDetailsChange} />,
+    2: (
+      <Desktop
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    3: (
+      <Cpu
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    4: (
+      <Gpu
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    5: (
+      <Psu
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    6: (
+      <MotherBoard
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    7: (
+      <Ram
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
+    8: (
+      <Storage
+        onSubmit={handleProductDetailsChange}
+        setIsValidParent={handleIsValidChange}
+      />
+    ),
   };
 
   return (

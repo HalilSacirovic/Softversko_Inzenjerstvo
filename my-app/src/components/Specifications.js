@@ -8,7 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 export default function Specifications({ data }) {
-  // Funkcija koja kreira objekat sa relevantnim podacima
   const getRelevantData = (item) => {
     if (item.isLaptop) {
       return {
@@ -101,6 +100,20 @@ export default function Specifications({ data }) {
         "RAM Slots": item.ram_slots || "N/A",
         "Max RAM Capacity": item.max_ram_capacity || "N/A",
         "Supported RAM Type": item.supported_ram_type || "N/A",
+        "Form Factor": item.form_factor || "N/A",
+      };
+    }
+    if (item.isPSU) {
+      return {
+        Name: item.name,
+        Manufacturer: item.manufacturer,
+        Price: `$${item.price}`,
+        Description: item.description,
+        stock_quantity: item.stock_quantity || "N/A",
+        socket: item.socket || "N/A",
+        power_output: item.power_output || "N/A",
+        cerfification: item.cerfification || "N/A",
+        modularity: item.modularity || "N/A",
         "Form Factor": item.form_factor || "N/A",
       };
     }
