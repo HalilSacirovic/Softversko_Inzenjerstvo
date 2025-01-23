@@ -13,6 +13,29 @@ app.use(cors());
 
 app.use(express.json());
 
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_EMAIL,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("Greška u SMTP vezi:", error);
+  } else {
+    console.log("SMTP konekcija uspostavljena:", success);
+  }
+});
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -54,6 +77,7 @@ app.get("/users", (req, res) => {
     res.json(results);
   });
 });
+
 app.post("/signup", (req, res) => {
   const {
     first_name,
@@ -69,20 +93,6 @@ app.post("/signup", (req, res) => {
     profile_picture_url,
     bio,
   } = req.body;
-
-  console.log("Podaci za unos:", {
-    first_name,
-    last_name,
-    username,
-    password,
-    email,
-    city,
-    country,
-    address,
-    phone_number,
-    profile_picture_url,
-    bio,
-  });
 
   const bcrypt = require("bcrypt");
   const saltRounds = 10;
@@ -103,7 +113,7 @@ app.post("/signup", (req, res) => {
         first_name,
         last_name,
         username,
-        hash, // Koristi šifrovanu lozinku
+        hash,
         email,
         city,
         country,
@@ -120,13 +130,51 @@ app.post("/signup", (req, res) => {
             .status(500)
             .json({ message: "Greška pri unosu korisnika", error: err });
         } else {
-          res.status(201).json({
-            message: "Korisnik uspešno dodat",
-            userId: result.insertId,
+          const confirmationLink = `http://localhost:3000/confirm?email=${email}`;
+          const mailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Confirm your account",
+            text: `Hello ${first_name},\n\nPlease confirm your account by clicking the link below:\n\n${confirmationLink}`,
+          };
+
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.error("Greška pri slanju e-maila:", err);
+              res
+                .status(500)
+                .json({ message: "Korisnik dodat, ali e-mail nije poslat." });
+            } else {
+              console.log("E-mail poslat:", info.response);
+              res.status(201).json({
+                message: "Korisnik uspešno dodat. Potvrda poslata na e-mail.",
+                userId: result.insertId,
+              });
+            }
           });
         }
       }
     );
+  });
+});
+
+app.get("/confirm", (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email nije prosleđen." });
+  }
+
+  const query = "UPDATE ehub_user SET verified  = 1 WHERE email = ?";
+  db.query(query, [email], (err, result) => {
+    if (err) {
+      console.error("SQL greška:", err.sqlMessage);
+      return res.status(500).json({ message: "Greška pri potvrdi." });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Korisnik nije pronađen." });
+    }
+    res.status(200).json({ message: "Nalog uspešno potvrđen." });
   });
 });
 
@@ -136,7 +184,7 @@ require("dotenv").config();
 const secretKey = process.env.JWT_TOKEN;
 // Definiši tajni ključ (čuvaj ga sigurnim!)
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]; // Očekuje se token u `Authorization` zaglavlju
+  const token = req.headers["authorization"];
   if (!token) {
     return res.status(403).json({ message: "Token nije obezbeđen" });
   }

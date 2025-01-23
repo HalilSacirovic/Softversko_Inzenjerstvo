@@ -17,6 +17,7 @@ import ProtectedRoute from "./Routes/ProtectedRoute";
 import ProfilePage from "./pages/User/User";
 import ProfileUser from "./pages/UserProfile/ProfileUser";
 import CartPage from "./pages/Cart/Cart";
+import ConfirmAccount from "./components/Confirm";
 
 const NavigationRoutes = () => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const NavigationRoutes = () => {
         <Route path="/admin/users" element={<UserTable />} />
         <Route path="/admin/products" element={<ProductList />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/confirm" element={<ConfirmAccount />} />
         <Route
           path="/addproduct"
           element={
