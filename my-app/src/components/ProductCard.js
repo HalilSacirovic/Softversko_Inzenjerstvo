@@ -47,7 +47,7 @@ export default function ProductCard(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("Recenzija je uspešno postavljena!");
+        alert("You added item in a cart");
       })
       .catch((error) => {
         console.error("Greška:", error);
@@ -152,9 +152,13 @@ export default function ProductCard(props) {
             },
           }}
           onClick={() => {
-            handleIsInCart(props.id)
-              ? alert("already  in cart")
-              : handleAddToCart();
+            if (user && user.userId) {
+              handleIsInCart(props.id)
+                ? alert("Already in cart")
+                : handleAddToCart(props.id);
+            } else {
+              alert("You need to register first!");
+            }
           }}
         >
           <ShoppingCartIcon sx={{ fontSize: 20, color: "#fff" }} />

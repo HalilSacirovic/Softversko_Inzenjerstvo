@@ -56,17 +56,16 @@ const ProfileUser = () => {
   const token = localStorage.getItem("auth_token"); // Pretpostavka da čuvaš token u localStorage
   const user = getUserFromToken(token);
 
-  const reviewData = {
-    reviewer_id: user.userId,
-    reviewed_id: params.id,
-    rating: rating,
-    comment: comment,
-  };
-
   useEffect(() => {
-    if (params.id && user.userId && String(params.id) === String(user.userId)) {
+    if (
+      user &&
+      params.id &&
+      user.userId &&
+      String(params.id) === String(user.userId)
+    ) {
       navigate(`/profile/${user.userId}`);
     }
+
     fetch(`http://localhost:5000/userprofile/${params.id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -79,7 +78,7 @@ const ProfileUser = () => {
     fetch(`http://localhost:5000/user_products/${params.id}`)
       .then((response) => response.json())
       .then((data) => {
-        setProductData(data);
+        setProductData(Array.isArray(data) ? data : []);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -106,11 +105,24 @@ const ProfileUser = () => {
   }, [params.id]);
 
   const isReviewed = () => {
-    hasReviewed
-      ? alert("Vec ste dodali jednu recenziju za ovog korisnika")
-      : handleReviewSubmit();
+    if (!user || !user.userId) {
+      alert("Morate biti prijavljeni da biste dodali recenziju.");
+      return;
+    }
+
+    if (hasReviewed) {
+      alert("Već ste dodali recenziju za ovog korisnika.");
+    } else {
+      handleReviewSubmit();
+    }
   };
   const handleReviewSubmit = () => {
+    const reviewData = {
+      reviewer_id: user.userId,
+      reviewed_id: params.id,
+      rating: rating,
+      comment: comment,
+    };
     fetch("http://localhost:5000/reviews_user", {
       method: "POST",
       headers: {

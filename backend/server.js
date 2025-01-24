@@ -65,7 +65,7 @@ app.get("/userprofile/:id", (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: "Korisnik nije pronađen" });
     }
-    res.json(result[0]); // Vraća podatke o korisniku
+    res.json(result[0]);
   });
 });
 
@@ -178,11 +178,11 @@ app.get("/confirm", (req, res) => {
   });
 });
 
-const jwt = require("jsonwebtoken"); // Dodaj ovu liniju
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const secretKey = process.env.JWT_TOKEN;
-// Definiši tajni ključ (čuvaj ga sigurnim!)
+
 const verifyToken = (req, res, next) => {
   const token = req.headers["authorization"];
   if (!token) {
@@ -193,7 +193,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: "Nevalidan token" });
     }
-    req.user = decoded; // Dekodirani podaci o korisniku
+    req.user = decoded;
     next();
   });
 };
@@ -206,15 +206,17 @@ app.get("/protected-route", verifyToken, (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res.status(400).json({
-      message: "Nedostaju korisničko ime ili lozinka",
+      message: "Nedostaju email ili lozinka",
     });
   }
+
   console.log("Pokušaj prijave za korisnika:", email);
 
-  const query = "SELECT * FROM ehub_user WHERE email = ? AND password_hash = ?";
-  db.query(query, [email, password], (err, results) => {
+  const query = "SELECT id, password_hash FROM ehub_user WHERE email = ?";
+  db.query(query, [email], (err, results) => {
     if (err) {
       console.error("SQL greška:", err.sqlMessage);
       return res
@@ -223,26 +225,36 @@ app.post("/login", (req, res) => {
     }
 
     if (results.length > 0) {
-      const user = results[0];
-      console.log("Korisnik pronađen:", user);
+      const { id, password_hash: hashedPassword } = results[0];
 
-      // Generisanje JWT tokena
-      const token = jwt.sign(
-        { userId: user.id, email: user.email }, // Payload tokena
-        secretKey, // Tajni ključ
-        { expiresIn: "2h" } // Token ističe za 2 sata
-      );
+      const bcrypt = require("bcrypt");
+      bcrypt.compare(password, hashedPassword, (err, isMatch) => {
+        if (err) {
+          console.error("Greška pri upoređivanju lozinki:", err);
+          return res.status(500).json({ message: "Greška pri autentikaciji" });
+        }
 
-      return res.status(200).json({
-        message: "Prijava uspešna",
-        token: token,
-        userId: user.id,
+        if (isMatch) {
+          console.log("Uspešna prijava za korisnika:", email);
+
+          const token = jwt.sign({ userId: id, email: email }, secretKey, {
+            expiresIn: "2h",
+          });
+
+          return res.status(200).json({
+            message: "Prijava uspešna",
+            token: token,
+          });
+        } else {
+          console.log("Pogrešna lozinka za korisnika:", email);
+          return res.status(401).json({ message: "Pogrešna lozinka" });
+        }
       });
     } else {
-      console.log("Neuspešna prijava: Pogrešno korisničko ime ili lozinka");
-      return res.status(401).json({
-        message: "Pogrešno korisničko ime ili lozinka",
-      });
+      console.log("Korisnik sa ovim emailom ne postoji:", email);
+      return res
+        .status(401)
+        .json({ message: "Korisnik sa ovim emailom ne postoji" });
     }
   });
 });

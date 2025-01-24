@@ -56,6 +56,10 @@ const Product = () => {
   const [data, setData] = React.useState({});
 
   const handleAddToCart = () => {
+    if (!user || !user.userId) {
+      alert("Morate biti prijavljeni da biste dodali proizvod u korpu!");
+      return;
+    }
     const data = {
       user_id: user.userId,
       produkt_id: params.id,
@@ -303,8 +307,10 @@ const Product = () => {
                   sx={{ backgroundColor: "#bdbdbd", color: "black" }}
                   onClick={() => {
                     {
-                      user.userId === data.user_id
-                        ? navigate(`/profile/${user.userId}`)
+                      user && user.userId
+                        ? user.userId === data.user_id
+                          ? navigate(`/profile/${user.userId}`)
+                          : navigate(`/user_profile/${data.user_id}`)
                         : navigate(`/user_profile/${data.user_id}`);
                     }
                   }}
@@ -328,7 +334,13 @@ const Product = () => {
               <NestedList
                 name="Add Review"
                 subname={
-                  <AddReview productId={params.id} userId={user.userId} />
+                  user && user.userId ? (
+                    <AddReview productId={params.id} userId={user.userId} />
+                  ) : (
+                    <Typography variant="body1" color="error">
+                      Morate biti prijavljeni da biste dodali recenziju.
+                    </Typography>
+                  )
                 }
                 width="500"
               />

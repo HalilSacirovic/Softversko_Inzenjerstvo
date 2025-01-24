@@ -110,7 +110,7 @@ const ProfilePage = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Dohvaćeni produkti:", data);
-        setProductData(data);
+        setProductData(Array.isArray(data) ? data : []);
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
@@ -182,34 +182,38 @@ const ProfilePage = () => {
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Recenzije
           </Typography>
-          {reviewData.map((review) => (
-            <Card
-              key={review.id}
-              sx={{
-                mb: 2,
-                padding: "10px",
-                boxShadow: 1,
-                backgroundColor: "#fff",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Avatar
-                  src={"trenutno nema"}
-                  sx={{ width: 40, height: 40, mr: 2 }}
-                />
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  {review.user_name}
-                </Typography>
-                <Rating
-                  value={review.rating}
-                  readOnly
-                  precision={0.5}
-                  sx={{ ml: 2 }}
-                />
-              </Box>
-              <Typography>{review.comment}</Typography>
-            </Card>
-          ))}
+          {productData && Object.keys(productData).length === 0 ? (
+            <Typography> You dont have any recension</Typography>
+          ) : (
+            reviewData.map((review) => (
+              <Card
+                key={review.id}
+                sx={{
+                  mb: 2,
+                  padding: "10px",
+                  boxShadow: 1,
+                  backgroundColor: "#fff",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Avatar
+                    src={"trenutno nema"}
+                    sx={{ width: 40, height: 40, mr: 2 }}
+                  />
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {review.user_name}
+                  </Typography>
+                  <Rating
+                    value={review.rating}
+                    readOnly
+                    precision={0.5}
+                    sx={{ ml: 2 }}
+                  />
+                </Box>
+                <Typography>{review.comment}</Typography>
+              </Card>
+            ))
+          )}
         </Box>
 
         <Divider sx={{ my: 3 }} />
@@ -217,11 +221,11 @@ const ProfilePage = () => {
         {/* Proizvodi */}
         <Box>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Moji proizvodi
+            My Products
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             {productData && Object.keys(productData).length === 0 ? (
-              <Typography>User aint selling any product</Typography>
+              <Typography> You dont have any product</Typography>
             ) : (
               productData.map((product) => (
                 <Grid item xs={12} sm={6} key={product.id}>

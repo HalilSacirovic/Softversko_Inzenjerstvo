@@ -39,14 +39,49 @@ const NavigationRoutes = () => {
         {/* <Route path="/signup/:id" element={<SignUp />} /> ovde sam stavio jer saljem id od usera ali treba za produkt k */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route
+          path="/profile/:id"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/user_profile/:id" element={<ProfileUser />} />
         <Route path="/product/:id" element={<Product />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/admin/users" element={<UserTable />} />
-        <Route path="/admin/products" element={<ProductList />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/confirm" element={<ConfirmAccount />} />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute>
+              <ProductList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/confirm"
+          element={
+            <ProtectedRoute>
+              <ConfirmAccount />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/addproduct"
           element={
