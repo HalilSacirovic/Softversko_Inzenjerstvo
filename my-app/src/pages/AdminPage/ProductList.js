@@ -14,7 +14,7 @@ import {
 import NavBar from "../../components/NavBar";
 
 // Komponenta za prikazivanje Laptopa
-const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
+const LaptopTable = ({ laptops, handleDeleteProduct }) => {
   return (
     <div>
       <h2>Laptops</h2>
@@ -55,14 +55,7 @@ const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
                 <TableCell>{laptop.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(laptop)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(laptop.id)}
+                    onClick={() => handleDeleteProduct(laptop.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -80,7 +73,7 @@ const LaptopTable = ({ laptops, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje Desktopa
-const DesktopTable = ({ desktops, handleEdit, handleDelete }) => {
+const DesktopTable = ({ desktops, handleDeleteProduct }) => {
   return (
     <div>
       <h2>Desktops</h2>
@@ -121,14 +114,7 @@ const DesktopTable = ({ desktops, handleEdit, handleDelete }) => {
                 <TableCell>{desktop.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(desktop)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(desktop.id)}
+                    onClick={() => handleDeleteProduct(desktop.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -146,7 +132,7 @@ const DesktopTable = ({ desktops, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje CPU
-const CPUTable = ({ cpus, handleEdit, handleDelete }) => {
+const CPUTable = ({ cpus, handleDeleteProduct }) => {
   return (
     <div>
       <h2>CPUs</h2>
@@ -187,14 +173,7 @@ const CPUTable = ({ cpus, handleEdit, handleDelete }) => {
                 <TableCell>{cpu.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(cpu)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(cpu.id)}
+                    onClick={() => handleDeleteProduct(cpu.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -212,7 +191,7 @@ const CPUTable = ({ cpus, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje GPU
-const GPTable = ({ gpus, handleEdit, handleDelete }) => {
+const GPTable = ({ gpus, handleDeleteProduct }) => {
   return (
     <div>
       <h2>GPUs</h2>
@@ -251,14 +230,7 @@ const GPTable = ({ gpus, handleEdit, handleDelete }) => {
                 <TableCell>{gpu.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(gpu)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(gpu.id)}
+                    onClick={() => handleDeleteProduct(gpu.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -276,7 +248,7 @@ const GPTable = ({ gpus, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje PSU
-const PSUTable = ({ psus, handleEdit, handleDelete }) => {
+const PSUTable = ({ psus, handleDeleteProduct }) => {
   return (
     <div>
       <h2>PSUs</h2>
@@ -311,14 +283,7 @@ const PSUTable = ({ psus, handleEdit, handleDelete }) => {
                 <TableCell>{psu.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(psu)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(psu.id)}
+                    onClick={() => handleDeleteProduct(psu.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -336,7 +301,7 @@ const PSUTable = ({ psus, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje RAM
-const RAMTable = ({ rams, handleEdit, handleDelete }) => {
+const RAMTable = ({ rams, handleDeleteProduct }) => {
   return (
     <div>
       <h2>RAMs</h2>
@@ -373,14 +338,7 @@ const RAMTable = ({ rams, handleEdit, handleDelete }) => {
                 <TableCell>{ram.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(ram)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(ram.id)}
+                    onClick={() => handleDeleteProduct(ram.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -398,7 +356,7 @@ const RAMTable = ({ rams, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za prikazivanje Storage uređaja
-const StorageTable = ({ storages, handleEdit, handleDelete }) => {
+const StorageTable = ({ storages, handleDeleteProduct }) => {
   return (
     <div>
       <h2>Storage Devices</h2>
@@ -433,14 +391,7 @@ const StorageTable = ({ storages, handleEdit, handleDelete }) => {
                 <TableCell>{storage.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(storage)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(storage.id)}
+                    onClick={() => handleDeleteProduct(storage.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -458,7 +409,11 @@ const StorageTable = ({ storages, handleEdit, handleDelete }) => {
 };
 
 // Komponenta za Motherboard
-const MotherboardTable = ({ motherboards, handleEdit, handleDelete }) => {
+const MotherboardTable = ({
+  motherboards,
+
+  handleDeleteProduct,
+}) => {
   return (
     <div>
       <h2>Motherboards</h2>
@@ -492,14 +447,7 @@ const MotherboardTable = ({ motherboards, handleEdit, handleDelete }) => {
                 <TableCell>{motherboard.user_rating}</TableCell>
                 <TableCell sx={{ textAlign: "right", paddingRight: 20 }}>
                   <Button
-                    onClick={() => handleEdit(motherboard)}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(motherboard.id)}
+                    onClick={() => handleDeleteProduct(motherboard.id)}
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: "10px" }}
@@ -536,12 +484,31 @@ const ProductCatalog = () => {
       });
   }, []);
 
-  const handleEdit = (product) => {
-    // Implementirajte funkcionalnost za uređivanje proizvoda
-  };
+  const handleDeleteProduct = (id) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete product with id: ${id}?`
+    );
 
-  const handleDelete = (id) => {
-    // Implementirajte funkcionalnost za brisanje proizvoda
+    if (confirmDelete) {
+      fetch(`http://localhost:5000/product/${id}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert(`Product ${id} is successfully deleted.`);
+            setFilteredProducts((prev) =>
+              prev.filter((user) => user.id !== id)
+            );
+            setProducts((prev) => prev.filter((user) => user.id !== id));
+          } else {
+            alert("Error with deleting product.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error with communacation with server:", error);
+          alert("Error with deleeting product.");
+        });
+    }
   };
 
   const laptops = filteredProducts.filter((product) => product.isLaptop);
@@ -583,43 +550,23 @@ const ProductCatalog = () => {
       </Box>
       <LaptopTable
         laptops={laptops}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleDeleteProduct={handleDeleteProduct}
       />
       <DesktopTable
         desktops={desktops}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleDeleteProduct={handleDeleteProduct}
       />
-      <CPUTable
-        cpus={cpus}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
-      <RAMTable
-        rams={rams}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
-      <GPTable
-        gpus={gpus}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
-      <PSUTable
-        psus={psus}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
+      <CPUTable cpus={cpus} handleDeleteProduct={handleDeleteProduct} />
+      <RAMTable rams={rams} handleDeleteProduct={handleDeleteProduct} />
+      <GPTable gpus={gpus} handleDeleteProduct={handleDeleteProduct} />
+      <PSUTable psus={psus} handleDeleteProduct={handleDeleteProduct} />
       <StorageTable
         storages={storages}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleDeleteProduct={handleDeleteProduct}
       />
       <MotherboardTable
         motherboards={motherboards}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleDeleteProduct={handleDeleteProduct}
       />
     </div>
   );

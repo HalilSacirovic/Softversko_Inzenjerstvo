@@ -338,7 +338,7 @@ const Product = () => {
                     <AddReview productId={params.id} userId={user.userId} />
                   ) : (
                     <Typography variant="body1" color="error">
-                      Morate biti prijavljeni da biste dodali recenziju.
+                      You need to be logged to add review
                     </Typography>
                   )
                 }

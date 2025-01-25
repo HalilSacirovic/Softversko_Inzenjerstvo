@@ -43,10 +43,10 @@ const ReviewList = ({ productId }) => {
 
   return (
     <Box>
-      <Typography variant="h6">Recenzije </Typography>
+      <Typography variant="h6">Reviews </Typography>
       {reviews.length === 0 ? (
         <Typography variant="body1">
-          Nema recenzija za ovaj proizvod.
+          This product doesnt have any review
         </Typography>
       ) : (
         <>

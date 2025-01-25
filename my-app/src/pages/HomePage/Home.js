@@ -96,24 +96,20 @@ const HomePage = () => {
       <NavBar />
       <Container fixed>
         <div className="main-section">
-          <CategoriesNav />
-          <div className="filters">
-            <button onClick={() => handleFilter("all")}>All</button>
-            <button onClick={() => handleFilter("isGPU")}>GPU</button>
-            <button onClick={() => handleFilter("isCPU")}>CPU</button>
-            <button onClick={() => handleFilter("isLaptop")}>Laptop</button>
-            <button onClick={() => handleFilter("isDesktop")}>Desktop</button>
-            <button onClick={() => handleFilter("isMotherboard")}>
-              Motherboard
-            </button>
-            <button onClick={() => handleFilter("isRAM")}>RAM</button>
-            <button onClick={() => handleFilter("isStorage")}>Storage</button>
-          </div>
-
           {/* Dropdown za sortiranje */}
-          <Box sx={{ my: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel id="sort-label">Sortiraj po</InputLabel>
+          <Box sx={{ my: 2, display: "flex" }}>
+            <CategoriesNav handleFilter={handleFilter} />
+            <FormControl
+              sx={{
+                width: 150,
+                backgroundColor: "white",
+                position: "absolute",
+                right: 390,
+              }}
+            >
+              <InputLabel id="sort-label" sx={{ color: "black" }}>
+                Sortiraj po
+              </InputLabel>
               <Select
                 labelId="sort-label"
                 id="sort-select"

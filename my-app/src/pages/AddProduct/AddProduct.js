@@ -193,7 +193,6 @@ const AddProduct = () => {
     <Box>
       <NavBar />
       <Container>
-        <CategoriesNav />
         <Grid container sx={{ marginTop: 2 }}>
           <Grid
             size={6}

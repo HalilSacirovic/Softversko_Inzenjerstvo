@@ -523,6 +523,25 @@ app.post("/add-product", (req, res) => {
   });
 });
 
+app.delete("/product/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM component WHERE id = ?";
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Produkt nije pronađen" });
+    }
+
+    res.json({ message: "Produkt je uspešno obrisan" });
+  });
+});
+
 app.get("/products", (req, res) => {
   db.query("SELECT * FROM component", (err, results) => {
     if (err) {

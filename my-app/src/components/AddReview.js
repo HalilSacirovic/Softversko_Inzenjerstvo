@@ -84,7 +84,7 @@ const AddReview = ({ productId, userId }) => {
 
   return (
     <Box>
-      <Typography variant="h6">Dodajte svoju recenziju</Typography>
+      <Typography variant="h6">Add your review</Typography>
       <Box sx={{ marginTop: 2 }}>
         <Rating
           name="rating"
@@ -103,8 +103,15 @@ const AddReview = ({ productId, userId }) => {
         />
       </Box>
       <Box sx={{ marginTop: 2 }}>
-        <Button onClick={isReviewed} variant="contained" color="primary">
-          Postavi recenziju
+        <Button
+          onClick={() => {
+            isReviewed();
+            window.location.reload();
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Post review
         </Button>
       </Box>
     </Box>
