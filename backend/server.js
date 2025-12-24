@@ -787,3 +787,84 @@ app.get("/incart", (req, res) => {
     res.json(result);
   });
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Assuming you have already set up express, mysql2, and cors as shown in your initial code
+
+// POST route to add a rental item
+app.post("/add-rental-item", (req, res) => {
+  const {
+    name,
+    rental_price,
+    description,
+    item_condition,
+    quantity,
+    availability,
+    posted_by,
+  } = req.body;
+
+  const query = `
+    INSERT INTO rental_items (name, rental_price, description, item_condition, quantity, availability, posted_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    query,
+    [
+      name,
+      rental_price,
+      description,
+      item_condition,
+      quantity,
+      availability,
+      posted_by,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("Database Error:", err);
+        return res.status(500).json({ error: "Failed to add rental item" });
+      }
+      res.status(201).json({
+        message: "Rental item added successfully",
+        itemId: result.insertId,
+      });
+    }
+  );
+});
+
+// GET route to fetch all rental items
+app.get("/rental-items", (req, res) => {
+  db.query("SELECT * FROM rental_items", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/rental-item/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      ri.*, 
+      u.id AS user_id, 
+      u.first_name AS user_name, 
+      u.last_name AS user_lastname, 
+      u.username AS username, 
+      u.email AS user_email, 
+      u.phone_number AS user_phone 
+    FROM rental_items ri
+    JOIN ehub_user u ON ri.posted_by = u.id
+    WHERE ri.id = ?`;
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Rental item not found" });
+    }
+    res.json(result[0]); // Return data of the rental item
+  });
+});

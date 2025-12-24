@@ -21,7 +21,7 @@ const HomePage = () => {
   const keywords = searchParams.get("keyword");
 
   React.useEffect(() => {
-    fetch("http://localhost:5000/products")
+    fetch("http://localhost:5000/rental-items")
       .then((response) => response.json())
       .then((data) => {
         setProduct(data);
@@ -70,10 +70,10 @@ const HomePage = () => {
 
     switch (criteria) {
       case "priceAsc":
-        sortedProducts.sort((a, b) => a.price - b.price);
+        sortedProducts.sort((a, b) => a.rental_price - b.rental_price);
         break;
       case "priceDesc":
-        sortedProducts.sort((a, b) => b.price - a.price);
+        sortedProducts.sort((a, b) => b.rental_price - a.rental_price);
         break;
       case "nameAsc":
         sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
@@ -140,7 +140,7 @@ const HomePage = () => {
                   <Grid item key={item.id}>
                     <ProductCard
                       id={item.id}
-                      price={item.price}
+                      price={item.rental_price}
                       name={item.name}
                       description={item.description}
                     />

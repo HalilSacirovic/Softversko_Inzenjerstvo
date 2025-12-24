@@ -83,7 +83,7 @@ const Product = () => {
   };
 
   React.useEffect(() => {
-    fetch("http://localhost:5000/product/" + params.id)
+    fetch("http://localhost:5000/rental-item/" + params.id)
       .then((response) => response.json())
       .then((data) => {
         console.log("Dohvaćeni produkti:", data);
