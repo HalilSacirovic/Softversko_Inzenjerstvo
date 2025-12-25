@@ -75,7 +75,7 @@ const Product = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("Recenzija je uspešno postavljena!");
+        alert("Dodato u korpi!");
       })
       .catch((error) => {
         console.error("Greška:", error);
@@ -166,9 +166,12 @@ const Product = () => {
   };
 
   const handleIsInCart = (productId) => {
-    return isInCart.some((item, idx) => item.produkt_id === productId);
-  };
+    if (!Array.isArray(isInCart)) return false;
 
+    return isInCart.some(
+      (item) => Number(item.produkt_id) === Number(productId)
+    );
+  };
   return (
     <Box>
       <NavBar />
@@ -207,7 +210,7 @@ const Product = () => {
                 </Box>
               </Box>
               <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h5">{data.price} $</Typography>
+                <Typography variant="h5">{data.rental_price} $</Typography>
               </Box>
               <Box sx={{ marginTop: 4 }}>
                 <Button

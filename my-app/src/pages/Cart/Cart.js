@@ -47,6 +47,7 @@ const CartPage = () => {
           });
           setValues(initialValues);
         }
+        console.log(data, "DATA FORM CART");
       })
       .catch((error) => {
         console.error("Došlo je do greške:", error);
@@ -69,7 +70,7 @@ const CartPage = () => {
 
   const calculateTotalPrice = () => {
     return cartData.reduce(
-      (sum, item) => sum + Number(item.c_price) * (values[item.id] || 0),
+      (sum, item) => sum + Number(item.ri_price) * (values[item.id] || 0),
       0
     );
   };
@@ -113,16 +114,13 @@ const CartPage = () => {
                 <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={9}>
-                      <Typography variant="h6">{item.c_name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {item.c_manufacturer}
-                      </Typography>
+                      <Typography variant="h6">{item.ri_name}</Typography>
                       <Typography variant="subtitle1" color="text.secondary">
-                        {item.c_details}
+                        {item.ri_details}
                       </Typography>
                     </Grid>
                     <Grid item xs={3} textAlign="right">
-                      <Typography variant="h6">{item.c_price}$</Typography>
+                      <Typography variant="h6">{item.ri_price}$</Typography>
                       <Box
                         display="flex"
                         justifyContent="flex-end"

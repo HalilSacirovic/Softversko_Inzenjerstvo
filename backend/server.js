@@ -735,7 +735,7 @@ app.post("/cart", (req, res) => {
 
     // Vraćanje uspešne odgovora
     res.status(201).json({
-      message: "Recenzija uspešno postavljena!",
+      message: "Uspesno dodato u korpu!",
       reviewId: result.insertId, // ID novo ubačene recenzije
     });
   });
@@ -747,12 +747,11 @@ app.get("/cart/:id", (req, res) => {
   const query = `
     SELECT 
       cart.*,
-      c.name AS c_name, 
-      c.price AS c_price, 
-      c.manufacturer as c_manufacturer,
-      c.description as c_details
+      ri.name AS ri_name, 
+      ri.rental_price AS ri_price, 
+      ri.description as ri_details
     FROM cart cart
-    JOIN component c ON cart.produkt_id = c.id 
+    JOIN rental_items ri ON cart.produkt_id = ri.id 
     WHERE cart.user_id = ?
   `;
 

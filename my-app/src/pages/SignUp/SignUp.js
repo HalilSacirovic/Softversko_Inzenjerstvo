@@ -72,9 +72,10 @@ const SignUp = () => {
                     console.log("Korisnik registrovan", data);
                     localStorage.setItem("auth_token", data.token);
                     localStorage.setItem("userId", data.userId);
+                    console.log(data, "DATA ");
                     setSubmitting(false);
                   }
-                  navigate("/"); // Redirekcija nakon uspešne registracije
+                  // navigate("/"); // Redirekcija nakon uspešne registracije
                 })
                 .catch((error) => {
                   console.error("Greška pri slanju podataka:", error);
