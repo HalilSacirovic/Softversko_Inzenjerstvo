@@ -181,11 +181,17 @@ const Product = () => {
           <Grid size={8}>
             <Box sx={{ backgroundColor: "blue", height: 500, display: "flex" }}>
               <Grid size={2} sx={{ backgroundColor: "yellow", height: 400 }}>
+                {/* Manje slike, možete dodati logiku za prikaz manjih slika ako imate */}
                 Ovde idu manje slike
               </Grid>
 
               <Grid size={10} sx={{ backgroundColor: "aqua", height: 400 }}>
-                Ovde ide velika slika
+                {/* Prikazivanje glavne slike */}
+                <img
+                  src={`http://localhost:5000${data.image_url}`} // Dodajte putanju do slike
+                  alt={data.name}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </Grid>
             </Box>
           </Grid>

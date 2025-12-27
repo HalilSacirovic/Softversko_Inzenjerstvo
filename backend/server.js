@@ -1,5 +1,6 @@
 const express = require("express");
 const mysql = require("mysql2");
+const multer = require("multer");
 // const bodyParser = require("body-parser");
 const app = express();
 const port = 5000;
@@ -10,6 +11,64 @@ app.listen(port, () => {
 
 const cors = require("cors");
 app.use(cors());
+
+const path = require("path"); // Dodajte ovo
+/// kod za sliku
+
+// Omogućiti statički pristup slikama iz foldera 'uploads'
+app.use("/uploads", express.static("uploads"));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Definišemo direktorijum za slike
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname); // Ekstenzija fajla
+    cb(null, Date.now() + ext); // Generišemo jedinstveno ime fajla
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/add-rental-item", upload.single("image"), (req, res) => {
+  const {
+    name,
+    rental_price,
+    description,
+    item_condition,
+    quantity,
+    availability,
+    posted_by,
+  } = req.body;
+  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null; // Putanja slike
+
+  const query =
+    "INSERT INTO rental_items (name, rental_price, description, item_condition, quantity, availability, image_url, posted_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+  db.query(
+    query,
+    [
+      name,
+      rental_price,
+      description,
+      item_condition,
+      quantity,
+      availability,
+      imageUrl,
+      posted_by,
+    ],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(201).json({ message: "Rental item added successfully!" });
+    }
+  );
+});
+
+// KOD ZA SLIKU ZAVRESATK
+
+/////
 
 app.use(express.json());
 
