@@ -699,9 +699,9 @@ app.get("/user_products/:id", (req, res) => {
   const query = ` SELECT 
       p.id AS product_id, 
       p.name AS product_name, 
-      p.price AS product_price
+      p.rental_price AS product_price
     FROM ehub_user u
-    JOIN component p ON   u.id =p.posted_by
+    JOIN rental_items p ON   u.id =p.posted_by
     WHERE u.id = ?`;
 
   db.query(query, [id], (err, result) => {

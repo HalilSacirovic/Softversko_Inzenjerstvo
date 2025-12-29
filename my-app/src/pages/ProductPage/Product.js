@@ -178,58 +178,93 @@ const Product = () => {
       <Container>
         <CategoriesNav />
         <Grid container spacing={1} sx={{ marginTop: 1 }}>
-          <Grid size={8}>
-            <Box sx={{ backgroundColor: "blue", height: 500, display: "flex" }}>
-              <Grid size={2} sx={{ backgroundColor: "yellow", height: 400 }}>
-                {/* Manje slike, možete dodati logiku za prikaz manjih slika ako imate */}
-                Ovde idu manje slike
-              </Grid>
-
-              <Grid size={10} sx={{ backgroundColor: "aqua", height: 400 }}>
-                {/* Prikazivanje glavne slike */}
-                <img
-                  src={`http://localhost:5000${data.image_url}`} // Dodajte putanju do slike
-                  alt={data.name}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </Grid>
+          {/* Left Grid Section - Main Image */}
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            sx={{
+              height: 500,
+              display: "flex",
+              justifyContent: "center",
+              backgroundColor: "#1f1f1f",
+            }}
+          >
+            <Box
+              sx={{ height: "100%", display: "flex", justifyContent: "center" }}
+            >
+              <img
+                src={`http://localhost:5000${data.image_url}`} // Add image path here
+                alt={data.name}
+                style={{
+                  width: "90%",
+                  height: "100%",
+                  objectFit: "contain", // Ensure the image fits properly inside the container
+                  borderRadius: "12px", // Smooth corners for a modern look
+                }}
+              />
             </Box>
           </Grid>
 
-          <Grid size={4}>
-            <Box sx={{ height: 500 }}>
-              <Box>
-                <Typography variant="h5">{data.name}</Typography>
-                <Box>
-                  <Box sx={{ display: "flex" }}>
-                    <Rating
-                      name="read-only"
-                      value={CountReview()}
-                      readOnly
-                      precision={0.1}
-                    />
-                    <Typography paddingLeft={2} color="green">
-                      {CountReview()}
-                    </Typography>
-                  </Box>
-                  <Typography>Total Reviews: ({reviews.length})</Typography>
-                </Box>
+          {/* Right Grid Section - Product Details */}
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            sx={{
+              paddingLeft: { xs: 1, sm: 4 },
+              height: 500,
+              borderRadius: "12px",
+            }}
+          >
+            <Box sx={{ height: "100%" }}>
+              {/* Product Name and Rating */}
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                {data.name}
+              </Typography>
+
+              <Box sx={{ display: "flex", alignItems: "center", marginTop: 2 }}>
+                <Rating
+                  name="read-only"
+                  value={CountReview()}
+                  readOnly
+                  precision={0.1}
+                  // Green rating stars
+                />
+                <Typography paddingLeft={2} sx={{}}>
+                  {CountReview()}
+                </Typography>
               </Box>
+              <Typography sx={{ marginTop: 2 }} variant="body2">
+                Total Reviews: ({reviews.length})
+              </Typography>
+
+              {/* Product Price */}
               <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h5">{data.rental_price} $</Typography>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  ${data.rental_price}
+                </Typography>
               </Box>
+
+              {/* Add to Cart Button */}
               <Box sx={{ marginTop: 4 }}>
                 <Button
                   sx={{
-                    width: "300px",
-                    backgroundColor: "orange",
-                    color: "black",
+                    width: "100%",
+                    backgroundColor: "#ff9800",
+                    color: "white",
                     borderRadius: 4,
+                    padding: "12px",
+                    ":hover": {
+                      backgroundColor: "#e68900", // Darker orange on hover
+                    },
                   }}
                   onClick={() => {
-                    handleIsInCart(Number(params.id))
-                      ? alert("already  in cart")
-                      : handleAddToCart();
+                    if (handleIsInCart(Number(data.id))) {
+                      alert("Already in cart");
+                    } else {
+                      handleAddToCart();
+                    }
                   }}
                 >
                   ADD TO CART
@@ -238,6 +273,7 @@ const Product = () => {
             </Box>
           </Grid>
         </Grid>
+
         <Grid container spacing={1} sx={{ marginTop: 2 }}>
           <Grid size={8}>
             <Box
