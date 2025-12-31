@@ -26,7 +26,7 @@ import { jwtDecode } from "jwt-decode";
 
 const Product = () => {
   const params = useParams();
-  console.log(params);
+  console.log("PARAMS", params, "PARAMS");
 
   const [reviews, setReviews] = useState([]);
   const [valueReview, setValueReview] = useState();

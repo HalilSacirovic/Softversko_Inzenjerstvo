@@ -3,31 +3,65 @@ import { Formik } from "formik";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-// import { setData } from "../../store/authSlice"; // Import Redux akcije
 import { authSlice } from "../../store/authSlice";
-import { jwtDecode } from "jwt-decode"; // Import jwt-decode za dekodiranje tokena
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Redux dispatch za slanje akcija
+  const dispatch = useDispatch();
 
   return (
-    <div className="div">
-      <div className="box">
-        <div className="logo">
-          <h1>Logo</h1>
+    <div className="loginPage">
+      <div className="loginCard">
+        {/* LEFT BRAND PANEL */}
+        <div className="loginLeft">
+          <div className="brandTop">
+            <div className="brandMark">R</div>
+            <div>
+              <div className="brandName">RENTIFY</div>
+              <div className="brandTag">Secure access to your rentals</div>
+            </div>
+          </div>
+
+          <h1 className="leftTitle">Welcome back</h1>
+          <p className="leftSubtitle">
+            Prijavi se i nastavi tamo gde si stao. Tvoje stvari, tvoja zarada,
+            tvoja fleksibilnost.
+          </p>
+
+          <div className="leftFeatures">
+            <div className="featureItem">
+              <span className="featureDot" />
+              Brz pristup profilu i proizvodima
+            </div>
+            <div className="featureItem">
+              <span className="featureDot" />
+              Bezbedan nalog i token auth
+            </div>
+            <div className="featureItem">
+              <span className="featureDot" />
+              Samo par sekundi do rentovanja
+            </div>
+          </div>
+
+          <div className="leftFooter">
+            <div className="hint">Don’t have an account?</div>
+            <button className="linkBtn" onClick={() => navigate("/signup")}>
+              Sign up →
+            </button>
+          </div>
         </div>
 
-        <div className="header">
-          <h1>Welcome Back!</h1>
-          <p>Please enter your details</p>
-        </div>
+        {/* RIGHT FORM PANEL */}
+        <div className="loginRight">
+          <div className="formHeader">
+            <h2>Log in</h2>
+            <p>Please enter your details</p>
+          </div>
 
-        <div className="inputs">
           <Formik
             initialValues={{ email: "", password: "" }}
             validate={(values) => {
-              console.log("Validating values:", values); // Prati validaciju
               const errors = {};
               if (!values.email) {
                 errors.email = "Required";
@@ -36,47 +70,35 @@ const Login = () => {
               ) {
                 errors.email = "Invalid email address";
               }
-              console.log("Validation errors:", errors); // Prati greške validacije
+              if (!values.password) {
+                errors.password = "Password is required";
+              }
               return errors;
             }}
             onSubmit={(values, { setSubmitting, setErrors }) => {
-              console.log("Submitting values:", values); // Prati podatke koji se šalju
               fetch("http://localhost:5000/login", {
                 method: "POST",
                 body: JSON.stringify(values),
-                headers: {
-                  "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
               })
                 .then((res) => {
-                  console.log("Response status:", res.status); // Prati status odgovora
-                  if (!res.ok) {
-                    throw new Error("Prijava neuspešna");
-                  }
+                  if (!res.ok) throw new Error("Prijava neuspešna");
                   return res.json();
                 })
                 .then((data) => {
-                  console.log("Response data:", data); // Prati podatke iz odgovora
                   if (data.token) {
-                    console.log("Token received:", data.token); // Prati primljeni token
                     localStorage.setItem("auth_token", data.token);
 
-                    // Dekodiranje tokena i postavljanje podataka u Redux
                     const decoded = jwtDecode(data.token);
-                    console.log("Decoded token data:", decoded); // Prati dekodirane podatke
-                    dispatch(authSlice.actions.setData(decoded)); // Slanje podataka u Redux
+                    dispatch(authSlice.actions.setData(decoded));
 
                     navigate("/");
                   }
                 })
-                .catch((err) => {
-                  console.error("Error during login:", err); // Prati greške
+                .catch(() => {
                   setErrors({ email: "Neuspešna prijava. Proverite podatke." });
                 })
-                .finally(() => {
-                  console.log("Submission complete"); // Prati završetak slanja
-                  setSubmitting(false);
-                });
+                .finally(() => setSubmitting(false));
             }}
           >
             {({
@@ -88,29 +110,74 @@ const Login = () => {
               handleSubmit,
               isSubmitting,
             }) => (
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="email"
-                  name="email"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.email}
-                  className="login_inputs"
-                />
-                {errors.email && touched.email && errors.email}
-                <input
-                  type="password"
-                  name="password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.password}
-                  className="login_inputs"
-                />
-                {errors.password && touched.password && errors.password}
+              <form onSubmit={handleSubmit} className="loginForm">
+                <div className="field">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                    className={`neoInput ${
+                      errors.email && touched.email ? "hasError" : ""
+                    }`}
+                    placeholder="email@domain.com"
+                  />
+                  {errors.email && touched.email && (
+                    <div className="errorText">{errors.email}</div>
+                  )}
+                </div>
 
-                <div className="btn">
-                  <button type="submit" disabled={isSubmitting}>
-                    Log In
+                <div className="field">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    className={`neoInput ${
+                      errors.password && touched.password ? "hasError" : ""
+                    }`}
+                    placeholder="••••••••"
+                  />
+                  {errors.password && touched.password && (
+                    <div className="errorText">{errors.password}</div>
+                  )}
+                </div>
+
+                <div className="rowBetween">
+                  <label className="remember">
+                    <input type="checkbox" />
+                    <span>Remember me</span>
+                  </label>
+
+                  <button
+                    type="button"
+                    className="linkBtnSmall"
+                    onClick={() => alert("Forgot password flow")}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                <button
+                  className="submitBtn"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Logging in..." : "Log in"}
+                </button>
+
+                <div className="bottomHint">
+                  New here?{" "}
+                  <button
+                    type="button"
+                    className="inlineLink"
+                    onClick={() => navigate("/signup")}
+                  >
+                    Create an account
                   </button>
                 </div>
               </form>
