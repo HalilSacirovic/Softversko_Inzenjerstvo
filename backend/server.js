@@ -1,12 +1,18 @@
 const express = require("express");
+const cloudinary = require("cloudinary").v2;
 const mysql = require("mysql2");
 const multer = require("multer");
-// const bodyParser = require("body-parser");
 const app = express();
 const port = 5000;
-// app.use(bodyParser.json());
+const upload = multer({ dest: "uploads/" });
 app.listen(port, () => {
   console.log(`Server je pokrenut na portu ${port}`);
+});
+
+cloudinary.config({
+  cloud_name: "daztujmyx",
+  api_key: 175545562989456,
+  api_secret: "eV-_OpdJ7Xv6FB_OnleBo68AbUU",
 });
 
 const cors = require("cors");
@@ -28,7 +34,32 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+app.post("/upload", upload.array("images"), (req, res) => {
+  const uploadedImages = [];
+
+  const uploadPromises = req.files.map((file) => {
+    return cloudinary.uploader
+      .upload(file.path, { folder: "rental-items" })
+      .then((result) => uploadedImages.push(result.secure_url))
+      .catch((err) => {
+        console.error("Cloudinary upload error:", err);
+      });
+  });
+
+  Promise.all(uploadPromises)
+    .then(() => {
+      res.json({
+        success: true,
+        images: uploadedImages,
+      });
+    })
+    .catch((error) => {
+      console.error("Error uploading images to Cloudinary:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Error uploading images" });
+    });
+});
 
 app.post("/add-rental-item", upload.single("image"), (req, res) => {
   const {
@@ -40,30 +71,69 @@ app.post("/add-rental-item", upload.single("image"), (req, res) => {
     availability,
     posted_by,
   } = req.body;
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null; // Putanja slike
 
-  const query =
-    "INSERT INTO rental_items (name, rental_price, description, item_condition, quantity, availability, image_url, posted_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  if (req.file) {
+    cloudinary.uploader.upload(
+      req.file.path,
+      { folder: "rental-items" },
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
 
-  db.query(
-    query,
-    [
-      name,
-      rental_price,
-      description,
-      item_condition,
-      quantity,
-      availability,
-      imageUrl,
-      posted_by,
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(201).json({ message: "Rental item added successfully!" });
-    }
-  );
+        // Putanja do slike na Cloudinary
+        const imageUrl = result.secure_url;
+
+        const query =
+          "INSERT INTO rental_items (name, rental_price, description, item_condition, quantity, availability, image_url, posted_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        db.query(
+          query,
+          [
+            name,
+            rental_price,
+            description,
+            item_condition,
+            quantity,
+            availability,
+            imageUrl, // Sada koristiš Cloudinary URL
+            posted_by,
+          ],
+          (err, result) => {
+            if (err) {
+              return res.status(500).json({ error: err.message });
+            }
+            res
+              .status(201)
+              .json({ message: "Rental item added successfully!" });
+          },
+        );
+      },
+    );
+  } else {
+    // Ako nije poslana slika, nastavi bez slike
+    const query =
+      "INSERT INTO rental_items (name, rental_price, description, item_condition, quantity, availability, posted_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    db.query(
+      query,
+      [
+        name,
+        rental_price,
+        description,
+        item_condition,
+        quantity,
+        availability,
+        posted_by,
+      ],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ message: "Rental item added successfully!" });
+      },
+    );
+  }
 });
 
 // KOD ZA SLIKU ZAVRESATK
@@ -212,7 +282,7 @@ app.post("/signup", (req, res) => {
             }
           });
         }
-      }
+      },
     );
   });
 });
@@ -601,6 +671,25 @@ app.delete("/product/:id", (req, res) => {
   });
 });
 
+app.delete("/cart/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM cart WHERE id = ?";
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Produkt nije pronađen" });
+    }
+
+    res.json({ message: "Produkt je uspešno obrisan" });
+  });
+});
+
 app.get("/products", (req, res) => {
   db.query("SELECT * FROM component", (err, results) => {
     if (err) {
@@ -746,7 +835,7 @@ app.post("/reviews_user", (req, res) => {
         message: "Recenzija uspešno postavljena!",
         reviewId: result.insertId, // ID novo ubačene recenzije
       });
-    }
+    },
   );
 });
 
@@ -887,7 +976,7 @@ app.post("/add-rental-item", (req, res) => {
         message: "Rental item added successfully",
         itemId: result.insertId,
       });
-    }
+    },
   );
 });
 
@@ -924,5 +1013,47 @@ app.get("/rental-item/:id", (req, res) => {
       return res.status(404).json({ message: "Rental item not found" });
     }
     res.json(result[0]); // Return data of the rental item
+  });
+});
+
+app.patch("/rental_item_patch/:id", (req, res) => {
+  const { id } = req.params;
+  const {
+    name,
+    rental_price,
+    description,
+    item_condition,
+    quantity,
+    availability,
+  } = req.body;
+
+  const query = `
+    UPDATE rental_items
+    SET
+      name = ?,
+      rental_price = ?,
+      description = ?,
+      item_condition = ?,
+      quantity = ?,
+      availability = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    name,
+    rental_price,
+    description,
+    item_condition,
+    quantity,
+    availability,
+    id,
+  ];
+
+  db.query(query, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Nije pronađen item za update" });
+    }
+    res.json({ message: "Uspešno ste ažurirali podatke produkta" });
   });
 });

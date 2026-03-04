@@ -44,8 +44,17 @@ export default function ProductCard(props) {
   }, []);
 
   const alreadyInCart = React.useMemo(() => {
-    return isInCart.some((item) => item.produkt_id === props.id);
-  }, [isInCart, props.id]);
+    if (!user?.userId) return false;
+
+    const list = Array.isArray(isInCart) ? isInCart : [];
+    return list.some(
+      (item) =>
+        Number(item?.produkt_id) === Number(props.id) &&
+        Number(item?.user_id) === Number(user.userId),
+    );
+  }, [isInCart, props.id, user?.userId]);
+
+  console.log("isincart", isInCart);
 
   const handleAddToCart = async () => {
     const data = { user_id: user.userId, produkt_id: props.id };
@@ -100,7 +109,7 @@ export default function ProductCard(props) {
         <Box sx={{ position: "relative" }}>
           <CardMedia
             component="img"
-            src={`http://localhost:5000${imageSrc}`}
+            src={imageSrc}
             alt={props.name}
             className="rentify-media"
             sx={{

@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import NavBar from "../../components/NavBar";
 import Laptop from "../../assets/laptop.png";
+import EditRentalItemModal from "../../components/PatchModul";
+import EditProfileModal from "../../components/EditProfileModal";
 
 import {
   Avatar,
@@ -60,7 +62,13 @@ const ProfilePage = () => {
 
   const [profileData, setProfileData] = useState({});
   const [productData, setProductData] = useState([]);
+  const [productDataPatch, setProductDataPatch] = useState([]);
+  const [editProductOpen, setEditProductOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [reviewData, setReviewData] = useState([]);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+
+  const handleOpenEditProfile = () => setEditProfileOpen(true);
 
   const [tab, setTab] = useState(0);
 
@@ -117,6 +125,13 @@ const ProfilePage = () => {
       .catch((error) => console.error("Došlo je do greške:", error));
   }, [params.id]);
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/rental_items_patch/${productData.product_id}`)
+      .then((r) => r.json())
+      .then((data) => setProductDataPatch(Array.isArray(data) ? data : []))
+      .catch((error) => console.error("Došlo je do greške:", error));
+  }, [params.id]);
+
   const handleEditToggle = () => {
     setIsEditing((s) => !s);
     // ako zatvaraš edit (mock), pokaži snackbar
@@ -129,6 +144,35 @@ const ProfilePage = () => {
     setShowDeleteWarning(false);
     alert("Profil bi bio obrisan (mock funkcija).");
   };
+
+  const handleOpenEditProduct = (product) => {
+    setSelectedProduct(product);
+    setEditProductOpen(true);
+  };
+
+  const handleSavedProduct = (updatedForm) => {
+    // odmah update UI liste (mapiranje name/rental_price nazad na product_name/product_price)
+    setProductData((prev) =>
+      prev.map((p) =>
+        p.product_id === selectedProduct.product_id
+          ? {
+              ...p,
+              product_name: updatedForm.name,
+              product_price: updatedForm.rental_price,
+              description: updatedForm.description,
+              item_condition: updatedForm.item_condition,
+              quantity: updatedForm.quantity,
+              availability: updatedForm.availability,
+            }
+          : p
+      )
+    );
+
+    setShowSnackbar(true);
+  };
+
+  console.log("PARAMS ID : : ;: ", params.id);
+  console.log("PRODUCT DATAID : : ;: ", productData);
 
   return (
     <>
@@ -155,7 +199,7 @@ const ProfilePage = () => {
               }}
             >
               <Button
-                onClick={handleEditToggle}
+                onClick={handleOpenEditProfile}
                 startIcon={<EditIcon />}
                 sx={{
                   position: "absolute",
@@ -453,6 +497,19 @@ const ProfilePage = () => {
                                     Detalji
                                   </Button>
                                 </Link>
+                                <Button
+                                  size="small"
+                                  startIcon={<EditIcon />}
+                                  variant="contained"
+                                  onClick={() => handleOpenEditProduct(product)}
+                                  sx={{
+                                    borderRadius: 3,
+                                    textTransform: "none",
+                                    fontWeight: 900,
+                                  }}
+                                >
+                                  Edit
+                                </Button>
 
                                 <Chip
                                   label="Dostupno"
@@ -617,11 +674,28 @@ const ProfilePage = () => {
           </Dialog>
 
           {/* Snackbar */}
+          <EditRentalItemModal
+            open={editProductOpen}
+            onClose={() => setEditProductOpen(false)}
+            product={selectedProduct}
+            productId={selectedProduct?.product_id}
+            onSaved={handleSavedProduct}
+          />
           <Snackbar
             open={showSnackbar}
             autoHideDuration={3000}
             onClose={() => setShowSnackbar(false)}
             message="Podaci uspešno izmenjeni!"
+          />
+          <EditProfileModal
+            open={editProfileOpen}
+            onClose={() => setEditProfileOpen(false)}
+            userId={params.id}
+            profile={profileData}
+            onSaved={(updated) => {
+              setProfileData(updated); // odmah osveži UI
+              setShowSnackbar(true); // tvoj snackbar "Podaci uspešno izmenjeni!"
+            }}
           />
         </Container>
       </Box>

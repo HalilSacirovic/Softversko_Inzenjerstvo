@@ -110,17 +110,6 @@ const NavBar = () => {
 
   const NavLinksLoggedIn = () => (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-      <Tooltip title="Favorites">
-        <IconButton
-          onClick={() => navigate("/favorites")}
-          sx={{ borderRadius: 3 }}
-        >
-          <Badge badgeContent={favoritesCount} color="primary">
-            <FavoriteBorderIcon />
-          </Badge>
-        </IconButton>
-      </Tooltip>
-
       <Tooltip title="Cart">
         <IconButton onClick={() => navigate("/cart")} sx={{ borderRadius: 3 }}>
           <Badge badgeContent={cartCount} color="primary">

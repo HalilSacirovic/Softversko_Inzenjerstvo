@@ -272,13 +272,11 @@ const AddRentalItem = () => {
                   select
                   fullWidth
                 >
-                  <MenuItem value={"Kao novo"}>Kao novo</MenuItem>
-                  <MenuItem value={"Odlično"}>Odlično</MenuItem>
-                  <MenuItem value={"Dobro"}>Dobro</MenuItem>
-                  <MenuItem value={"Polovno"}>Polovno</MenuItem>
-                  <MenuItem value={"Potrebna popravka"}>
-                    Potrebna popravka
-                  </MenuItem>
+                  <MenuItem value={"New"}>New</MenuItem>
+                  <MenuItem value={"Great"}>Great</MenuItem>
+                  <MenuItem value={"Good"}>Good</MenuItem>
+                  <MenuItem value={"Used"}>Used</MenuItem>
+                  <MenuItem value={"Need Repair"}>Need Repair</MenuItem>
                 </TextField>
 
                 <Grid container spacing={2}>

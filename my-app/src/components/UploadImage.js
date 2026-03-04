@@ -1,44 +1,50 @@
-import { Button, Box } from "@mui/material";
 import React from "react";
+import axios from "axios";
+import { Button, Box } from "@mui/material";
 import ImageUploading from "react-images-uploading";
 
 function UploadImage() {
   const [images, setImages] = React.useState([]);
   const maxNumber = 69;
+  const [uploadStatus, setUploadStatus] = React.useState("");
 
   const onChange = (imageList) => {
     setImages(imageList);
   };
 
-  const updateImage = (index) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const updatedImages = [...images];
-          updatedImages[index] = {
-            ...updatedImages[index],
-            data_url: e.target.result,
-          };
-          setImages(updatedImages);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    input.click();
-  };
+  const handleImageUpload = async () => {
+    const formData = new FormData();
+    images.forEach((image) => {
+      formData.append("images", image.file);
+    });
 
-  const removeImage = (index) => {
-    const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
-    setImages(updatedImages);
+    console.log("Form data: ", formData);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      if (response.data.success) {
+        console.log("Uploaded images:", response.data.images);
+        setUploadStatus("Upload Successful!");
+      } else {
+        setUploadStatus("Upload Failed!");
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      setUploadStatus("Error occurred during upload.");
+    }
   };
 
   return (
-    <div className="not_app">
+    <div>
       <Box
         sx={{
           width: "500px",
@@ -56,7 +62,7 @@ function UploadImage() {
           overflowY: "auto",
           padding: "10px",
           "&::-webkit-scrollbar": {
-            display: "none", // Sakriva scroll traku u preglednicima baziranim na WebKit-u
+            display: "none",
           },
         }}
       >
@@ -69,13 +75,6 @@ function UploadImage() {
                 height: "200px",
                 position: "relative",
                 margin: "5px",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflowY: "auto",
-                backgroundColor: "white",
-                boxShadow: "0 0 5px rgba(0,0,0,0.5)",
               }}
             >
               <img
@@ -87,37 +86,6 @@ function UploadImage() {
                   objectFit: "contain",
                 }}
               />
-              <div
-                style={{
-                  position: "absolute",
-                  top: "5px",
-                  right: "5px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "5px",
-                }}
-              >
-                <Button
-                  size="small"
-                  sx={{
-                    backgroundColor: "orange",
-                    color: "black",
-                  }}
-                  onClick={() => updateImage(index)}
-                >
-                  Update
-                </Button>
-                <Button
-                  size="small"
-                  sx={{
-                    backgroundColor: "red",
-                    color: "white",
-                  }}
-                  onClick={() => removeImage(index)}
-                >
-                  Remove
-                </Button>
-              </div>
             </div>
           ))
         ) : (
@@ -135,11 +103,7 @@ function UploadImage() {
         {({ onImageUpload, dragProps }) => (
           <div className="upload__image-wrapper">
             <Button
-              sx={{
-                color: "black",
-                backgroundColor: "orange",
-                margin: "5px",
-              }}
+              sx={{ color: "black", backgroundColor: "orange", margin: "5px" }}
               onClick={onImageUpload}
               {...dragProps}
             >
@@ -148,6 +112,15 @@ function UploadImage() {
           </div>
         )}
       </ImageUploading>
+
+      <Button
+        sx={{ color: "white", backgroundColor: "green", margin: "5px" }}
+        onClick={handleImageUpload}
+      >
+        Upload to Server
+      </Button>
+
+      <div>{uploadStatus}</div>
     </div>
   );
 }

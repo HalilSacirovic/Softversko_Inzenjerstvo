@@ -68,10 +68,35 @@ const CartPage = () => {
     }));
   };
 
+  const handleRemoveProduct = (productId) => {
+    // Poslati zahtev za brisanje proizvoda
+    fetch(`http://localhost:5000/cart/${productId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Ako je proizvod uspešno obrisan, ažuriraj stanje
+          setCartData((prevData) =>
+            prevData.filter((item) => item.id !== productId),
+          );
+          alert("Proizvod je uspešno obrisan!");
+        } else {
+          alert("Došlo je do greške prilikom brisanja proizvoda.");
+        }
+      })
+      .catch((error) => {
+        console.error("Greška prilikom brisanja:", error);
+      });
+  };
+
   const calculateTotalPrice = () => {
     return cartData.reduce(
       (sum, item) => sum + Number(item.ri_price) * (values[item.id] || 0),
-      0
+      0,
     );
   };
 
@@ -145,6 +170,16 @@ const CartPage = () => {
                           +
                         </Button>
                       </Box>
+                      {/* Dugme za brisanje */}
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        size="small"
+                        onClick={() => handleRemoveProduct(item.id)}
+                        sx={{ mt: 2 }}
+                      >
+                        Izbriši
+                      </Button>
                     </Grid>
                   </Grid>
                 </Paper>
