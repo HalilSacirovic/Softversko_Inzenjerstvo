@@ -125,12 +125,7 @@ const ProfilePage = () => {
       .catch((error) => console.error("Došlo je do greške:", error));
   }, [params.id]);
 
-  useEffect(() => {
-    fetch(`http://localhost:5000/rental_items_patch/${productData.product_id}`)
-      .then((r) => r.json())
-      .then((data) => setProductDataPatch(Array.isArray(data) ? data : []))
-      .catch((error) => console.error("Došlo je do greške:", error));
-  }, [params.id]);
+  // Uklanjam useEffect koji je bio za rental_items_patch
 
   const handleEditToggle = () => {
     setIsEditing((s) => !s);
@@ -150,8 +145,24 @@ const ProfilePage = () => {
     setEditProductOpen(true);
   };
 
+  // Ovdje je nova funkcija za pozivanje fetch kada korisnik pritisne "Edit"
+  const handleEditProduct = () => {
+    if (selectedProduct) {
+      fetch(
+        `http://localhost:5000/rental_items_patch/${selectedProduct.product_id}`,
+      )
+        .then((r) => r.json())
+        .then((data) => setProductDataPatch(Array.isArray(data) ? data : []))
+        .catch((error) => {
+          console.error(
+            "Greška prilikom učitavanja podataka o proizvodu:",
+            error,
+          );
+        });
+    }
+  };
+
   const handleSavedProduct = (updatedForm) => {
-    // odmah update UI liste (mapiranje name/rental_price nazad na product_name/product_price)
     setProductData((prev) =>
       prev.map((p) =>
         p.product_id === selectedProduct.product_id
@@ -163,16 +174,14 @@ const ProfilePage = () => {
               item_condition: updatedForm.item_condition,
               quantity: updatedForm.quantity,
               availability: updatedForm.availability,
+              image_url: updatedForm.image_url,
             }
-          : p
-      )
+          : p,
+      ),
     );
 
     setShowSnackbar(true);
   };
-
-  console.log("PARAMS ID : : ;: ", params.id);
-  console.log("PRODUCT DATAID : : ;: ", productData);
 
   return (
     <>
@@ -457,7 +466,7 @@ const ProfilePage = () => {
                               }}
                             >
                               <img
-                                src={Laptop}
+                                src={product.image_url}
                                 alt={product.product_name}
                                 style={{
                                   width: "100%",

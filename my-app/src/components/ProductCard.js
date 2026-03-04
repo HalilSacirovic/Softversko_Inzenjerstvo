@@ -36,13 +36,6 @@ export default function ProductCard(props) {
     }
   }, [token]);
 
-  React.useEffect(() => {
-    fetch(`http://localhost:5000/incart`)
-      .then((r) => r.json())
-      .then((data) => setIsInCart(data))
-      .catch((err) => console.error("Došlo je do greške:", err));
-  }, []);
-
   const alreadyInCart = React.useMemo(() => {
     if (!user?.userId) return false;
 
@@ -54,27 +47,56 @@ export default function ProductCard(props) {
     );
   }, [isInCart, props.id, user?.userId]);
 
-  console.log("isincart", isInCart);
-
+  // Funkcija koja se poziva kada korisnik klikne na dugme za dodavanje u korpu
   const handleAddToCart = async () => {
-    const data = { user_id: user.userId, produkt_id: props.id };
+    // Prvo proveri da li je korisnik prijavljen
+    if (!user?.userId) {
+      return alert("Moraš prvo da se registruješ!");
+    }
 
+    // Napravimo zahtev za proveru da li je proizvod već u korpi
     try {
-      const res = await fetch("http://localhost:5000/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      await res.json();
-      alert("Dodato u korpu!");
-    } catch (e) {
-      console.error(e);
-      alert("Greška prilikom dodavanja u korpu.");
+      const res = await fetch("http://localhost:5000/incart"); // Možeš koristiti endpoint za proveru korpe
+      const data = await res.json();
+
+      // Ako je proizvod već u korpi, obavesti korisnika
+      const alreadyInCart = data.some(
+        (item) =>
+          Number(item?.produkt_id) === Number(props.id) &&
+          Number(item?.user_id) === Number(user.userId),
+      );
+
+      if (alreadyInCart) {
+        alert("Proizvod je već u korpi.");
+      } else {
+        alert("Proizvod nije u korpi. Možeš da ga dodaš.");
+        const addToCartData = {
+          user_id: user.userId,
+          produkt_id: props.id,
+        };
+
+        // Slanje zahteva za dodavanje u korpu
+        const addRes = await fetch("http://localhost:5000/cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(addToCartData),
+        });
+
+        if (addRes.ok) {
+          alert("Proizvod je uspešno dodat u korpu!");
+        } else {
+          alert("Greška prilikom dodavanja proizvoda u korpu.");
+        }
+      }
+    } catch (error) {
+      console.error("Došlo je do greške:", error);
+      alert("Došlo je do greške. Pokušajte ponovo.");
     }
   };
 
   const imageSrc = props.imageUrl || laptop;
-  console.log(imageSrc, "image src");
 
   return (
     <MotionCard
@@ -92,7 +114,6 @@ export default function ProductCard(props) {
         "&:hover": {
           boxShadow: "0 20px 55px rgba(0,0,0,0.14)",
         },
-        // Image zoom on hover:
         "&:hover .rentify-media": {
           transform: "scale(1.07)",
         },
@@ -101,7 +122,6 @@ export default function ProductCard(props) {
         },
       }}
     >
-      {/* Clickable area (image + content) */}
       <Box
         onClick={() => navigate("/product/" + props.id)}
         sx={{ cursor: "pointer" }}
@@ -119,7 +139,6 @@ export default function ProductCard(props) {
             }}
           />
 
-          {/* Gradient for readability */}
           <Box
             sx={{
               position: "absolute",
@@ -130,7 +149,6 @@ export default function ProductCard(props) {
             }}
           />
 
-          {/* Chips */}
           <Stack
             direction="column"
             spacing={1}
@@ -169,7 +187,6 @@ export default function ProductCard(props) {
             ) : null}
           </Stack>
 
-          {/* Price badge on image */}
           <Box
             sx={{
               position: "absolute",
@@ -189,7 +206,6 @@ export default function ProductCard(props) {
             </Typography>
           </Box>
 
-          {/* Hover hint */}
           <Box
             className="rentify-overlay"
             sx={{
@@ -242,7 +258,6 @@ export default function ProductCard(props) {
         </CardContent>
       </Box>
 
-      {/* Bottom actions row */}
       <Box
         sx={{
           px: 2,
@@ -268,17 +283,10 @@ export default function ProductCard(props) {
           title={alreadyInCart ? "Već je u korpi" : "Dodaj u korpu"}
           arrow
         >
-          {/* span zbog disabled tooltip bug-a */}
           <span>
             <IconButton
               disabled={alreadyInCart || props.availability === 0}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!user?.userId)
-                  return alert("Moraš prvo da se registruješ!");
-                if (alreadyInCart) return alert("Already in cart");
-                handleAddToCart();
-              }}
+              onClick={handleAddToCart}
               sx={{
                 width: 46,
                 height: 46,

@@ -12,6 +12,7 @@ import {
 import NavBar from "../../components/NavBar";
 import PaymentModal from "../../components/PaymentModal";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const [promoCode, setPromoCode] = useState("");
@@ -20,6 +21,9 @@ const CartPage = () => {
   const [values, setValues] = useState({});
   const [discount, setDiscount] = useState(0);
   const [openModal, setOpenModal] = useState(false);
+  const [message, setMessage] = useState(""); // Za poruku o praznoj korpi
+
+  const navigate = useNavigate();
 
   const getUserFromToken = (token) => {
     if (!token) return null;
@@ -34,25 +38,25 @@ const CartPage = () => {
   const token = localStorage.getItem("auth_token");
   const user = getUserFromToken(token);
 
+  // useEffect za dobijanje podataka iz korpe korisnika
   useEffect(() => {
-    fetch(`http://localhost:5000/cart/${user.userId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCartData(data);
-
-          const initialValues = {};
-          data.forEach((item) => {
-            initialValues[item.id] = 1;
-          });
-          setValues(initialValues);
-        }
-        console.log(data, "DATA FORM CART");
-      })
-      .catch((error) => {
-        console.error("Došlo je do greške:", error);
-      });
-  }, [user.userId]);
+    if (user && user.userId) {
+      // Ako postoji korisnik, pozovemo API za korpu
+      fetch(`http://localhost:5000/cart/${user.userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCartData(data); // Učitaj podatke u korpu
+          } else {
+            setCartData([]); // Ako nije niz, postavi prazan niz
+            setMessage("Nemate proizvode u korpi."); // Prikazivanje poruke ako korpa nije pronađena
+          }
+        })
+        .catch((error) => {
+          setMessage("Nemate proizvode u korpi."); // Prikazivanje poruke ako dođe do greške
+        });
+    }
+  }, [user]);
 
   const handleIncrement = (id) => {
     setValues((prevValues) => ({
@@ -133,97 +137,117 @@ const CartPage = () => {
           <Typography variant="h4" gutterBottom>
             Vaša korpa
           </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
-              {cartData.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={9}>
-                      <Typography variant="h6">{item.ri_name}</Typography>
-                      <Typography variant="subtitle1" color="text.secondary">
-                        {item.ri_details}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={3} textAlign="right">
-                      <Typography variant="h6">{item.ri_price}$</Typography>
-                      <Box
-                        display="flex"
-                        justifyContent="flex-end"
-                        alignItems="center"
-                        mt={1}
-                      >
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => handleDecrement(item.id)}
-                        >
-                          -
-                        </Button>
-                        <Typography sx={{ mx: 1 }}>
-                          {values[item.id] || 0}
+
+          {/* Provera da li je korpa prazna */}
+          {cartData.length === 0 ? (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <Typography variant="h6" color="text.secondary">
+                {message ||
+                  "Vaša korpa je prazna. Dodajte proizvode da biste nastavili."}
+              </Typography>
+              <Button
+                variant="outlined"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/products")}
+              >
+                Dodajte proizvode
+              </Button>
+            </Box>
+          ) : (
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={8}>
+                {cartData.map((item) => (
+                  <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={9}>
+                        <Typography variant="h6">{item.ri_name}</Typography>
+                        <Typography variant="subtitle1" color="text.secondary">
+                          {item.ri_details}
                         </Typography>
+                      </Grid>
+                      <Grid item xs={3} textAlign="right">
+                        <Typography variant="h6">{item.ri_price}$</Typography>
+                        <Box
+                          display="flex"
+                          justifyContent="flex-end"
+                          alignItems="center"
+                          mt={1}
+                        >
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => handleDecrement(item.id)}
+                          >
+                            -
+                          </Button>
+                          <Typography sx={{ mx: 1 }}>
+                            {values[item.id] || 0}
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => handleIncrement(item.id)}
+                          >
+                            +
+                          </Button>
+                        </Box>
+                        {/* Dugme za brisanje */}
                         <Button
                           variant="outlined"
+                          color="secondary"
                           size="small"
-                          onClick={() => handleIncrement(item.id)}
+                          onClick={() => handleRemoveProduct(item.id)}
+                          sx={{ mt: 2 }}
                         >
-                          +
+                          Izbriši
                         </Button>
-                      </Box>
-                      {/* Dugme za brisanje */}
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="small"
-                        onClick={() => handleRemoveProduct(item.id)}
-                        sx={{ mt: 2 }}
-                      >
-                        Izbriši
-                      </Button>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  </Paper>
+                ))}
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Pregled narudžbine
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <Typography variant="body1">
+                    Cena za online plaćanje:
+                  </Typography>
+                  <Typography variant="h5" sx={{ mb: 1 }}>
+                    {fullPrice()} $
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Discount: {discount.toFixed(2)} $
+                  </Typography>
+                  <Divider sx={{ my: 2 }} />
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    color="primary"
+                    sx={{ mb: 2 }}
+                    onClick={() => setOpenModal(true)}
+                  >
+                    Nastavite
+                  </Button>
+                  <TextField
+                    fullWidth
+                    placeholder="PROMO KOD"
+                    size="small"
+                    sx={{ mb: 1 }}
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                  />
+                  <Button onClick={handleDiscount} variant="outlined" fullWidth>
+                    Primeni kod
+                  </Button>
                 </Paper>
-              ))}
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  Pregled narudžbine
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                <Typography variant="body1">
-                  Cena za online plaćanje:
-                </Typography>
-                <Typography variant="h5" sx={{ mb: 1 }}>
-                  {fullPrice()} $
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Discount: {discount.toFixed(2)} $
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Button
-                  variant="contained"
-                  fullWidth
-                  color="primary"
-                  sx={{ mb: 2 }}
-                  onClick={() => setOpenModal(true)}
-                >
-                  Nastavite
-                </Button>
-                <TextField
-                  fullWidth
-                  placeholder="PROMO KOD"
-                  size="small"
-                  sx={{ mb: 1 }}
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                />
-                <Button onClick={handleDiscount} variant="outlined" fullWidth>
-                  Primeni kod
-                </Button>
-              </Paper>
-            </Grid>
-          </Grid>
+          )}
 
           <PaymentModal
             open={openModal}

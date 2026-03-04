@@ -788,7 +788,8 @@ app.get("/user_products/:id", (req, res) => {
   const query = ` SELECT 
       p.id AS product_id, 
       p.name AS product_name, 
-      p.rental_price AS product_price
+      p.rental_price AS product_price,
+      p.image_url as image_url
     FROM ehub_user u
     JOIN rental_items p ON   u.id =p.posted_by
     WHERE u.id = ?`;
@@ -888,30 +889,36 @@ app.post("/cart", (req, res) => {
     });
   });
 });
-
 app.get("/cart/:id", (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Korisnički ID
 
+  // SQL upit za traženje proizvoda u korisničkoj korpi
   const query = `
     SELECT 
       cart.*,
       ri.name AS ri_name, 
       ri.rental_price AS ri_price, 
-      ri.description as ri_details
+      ri.description AS ri_details,
+      ri.id AS product_id  -- Dodavanje ID proizvoda radi lakšeg praćenja
     FROM cart cart
     JOIN rental_items ri ON cart.produkt_id = ri.id 
     WHERE cart.user_id = ?
   `;
 
+  // Izvršavanje SQL upita
   db.query(query, [id], (err, result) => {
     if (err) {
       console.error("Greška prilikom izvršenja upita:", err.message);
       return res.status(500).json({ error: "Interna greška servera" });
     }
+
     if (result.length === 0) {
-      return res.status(404).json({ message: "Recenzija nije pronađena" });
+      // Ako korisnik nema proizvode u korpi, vratiti prazan niz
+      return res.status(200).json({ message: "Korpa je prazna", cart: [] });
     }
-    res.json(result);
+
+    // Vraćamo proizvode u korpi
+    res.json({ message: "Proizvodi u korpi", cart: result });
   });
 });
 

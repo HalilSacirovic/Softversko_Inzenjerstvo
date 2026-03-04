@@ -100,23 +100,22 @@ const ProfileUser = () => {
 
   const fetchAll = async () => {
     try {
-      // profile
       const profileRes = await fetch(
-        `http://localhost:5000/userprofile/${params.id}`
+        `http://localhost:5000/userprofile/${params.id}`,
       );
       const profileJson = await profileRes.json();
       setProfileData(profileJson || {});
 
       // products
       const prodRes = await fetch(
-        `http://localhost:5000/user_products/${params.id}`
+        `http://localhost:5000/user_products/${params.id}`,
       );
       const prodJson = await prodRes.json();
       setProductData(Array.isArray(prodJson) ? prodJson : []);
 
       // reviews
       const revRes = await fetch(
-        `http://localhost:5000/review_user/${params.id}`
+        `http://localhost:5000/review_user/${params.id}`,
       );
       const revJson = await revRes.json();
       const arr = Array.isArray(revJson) ? revJson : [];
@@ -125,7 +124,7 @@ const ProfileUser = () => {
       // hasReviewed (ako user nije ulogovan -> false)
       if (user?.userId) {
         const alreadyReviewed = arr.some(
-          (review) => String(review.reviewer_id) === String(user.userId)
+          (review) => String(review.reviewer_id) === String(user.userId),
         );
         setHasReviewed(alreadyReviewed);
       } else {
